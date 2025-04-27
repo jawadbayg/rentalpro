@@ -101,7 +101,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Add Vehicle</button>
+        <button type="submit" class="btn-black">Add Vehicle</button>
     </form>
 </div>
 

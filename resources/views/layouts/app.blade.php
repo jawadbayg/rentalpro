@@ -83,13 +83,40 @@
                 height: 100%; 
             }
         }
-        .logo{
-            margin-top: -10px;
-            margin-bottom: 50px;
-            margin-left: 20px;
-            color: white;
-            font-family:'Times New Roman', Times, serif;
-        }
+        .logo {
+    margin-top: -10px;
+    margin-bottom: 50px;
+    margin-left: 20px;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.logo-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logo-btn:hover,
+.logo-btn:focus,
+.logo-btn:active {
+    background: none;
+    border: none;
+    outline: none;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: none;
+}
+  
+
+
+
         .content-area-guest {
             width: 100%; 
             margin-left: 0;
@@ -169,7 +196,11 @@
                     @if (Auth::user()->hasRole('Admin'))
                         <div class="sidebar">
                             <div class="logo">
-                                <h3>Rental Pro</h3>
+                                <h3>
+                                    <button onclick="window.location.href='{{ url('/home') }}'" class="logo-btn">
+                                        Rental Pro
+                                    </button>
+                                </h3>
                             </div>
     
                     <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
@@ -181,9 +212,13 @@
 
                     @elseif (Auth::user()->hasRole('FP'))
                     <div class="sidebar">
-                            <div class="logo">
-                                <h3>Rental Pro</h3>
-                            </div>
+                        <div class="logo">
+                            <h3>
+                                <button onclick="window.location.href='{{ url('/home') }}'" class="logo-btn">
+                                    Rental Pro
+                                </button>
+                            </h3>
+                        </div>
                         <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
                         <a href=""><i class="fa fa-box"></i> Invoices</a>
                     </div>

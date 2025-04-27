@@ -71,7 +71,7 @@
             @endforeach
         </div>
 
-        <button type="submit" class="btn btn-success">Update Vehicle</button>
+        <button type="submit" class="btn-black mt-4">Update Vehicle</button>
     </form>
 </div>
 

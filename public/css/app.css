@@ -13,6 +13,17 @@ body{
     display: inline-block; 
     text-align: center;
 }
+.btn-black-sm{
+    background-color: black;
+    padding: 7px;
+    color: white;
+    border-radius: 9px;
+    width: auto; 
+    min-width: 90px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+}
 .btn-outline{
     background-color: rgb(255, 255, 255);
     padding: 10px;
@@ -108,3 +119,30 @@ body{
 }
 
 /* end here */
+
+.profile_settings_container{
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+
+}
+
+.users_index_container{
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+
+}
+
+.user-create-container{
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.role_index_container{
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+
+}
