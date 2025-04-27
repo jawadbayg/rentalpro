@@ -1,0 +1,28 @@
+/* partials/section1 css  */
+#section1Carousal {
+    height: 500px !important;
+}
+
+.carousel-item img {
+    max-height: 500px;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    position: absolute;
+    bottom: 100px;
+    left: 20px;
+    right: 20px;
+    color: rgb(220, 42, 42);
+    text-shadow: 2px 2px 4px rgba(216, 38, 38, 0.5);
+    background: rgba(216, 40, 40, 0.5); /* Optional, adds a transparent dark background */
+    padding: 10px;
+    width: 100%; /* Make the caption span across the entire width of the carousel */
+    text-align: center; /* Center the text */
+}
+
+.carousel-caption h3, .carousel-caption p {
+    margin: 0;
+}
+
+/* end here */

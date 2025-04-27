@@ -61,6 +61,22 @@
                             </div>
                         </div>
 
+                        <!-- Role Selection -->
+                        <div class="row mb-3">
+                            <label for="role" class="col-md-4 col-form-label text-md-end">{{ __('Register As') }}</label>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="role_fp" name="role" value="FP" checked>
+                                    <label class="form-check-label" for="role_fp">{{ __('Fleet Provider') }}</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="role_user" name="role" value="User">
+                                    <label class="form-check-label" for="role_user">{{ __('Customer') }}</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

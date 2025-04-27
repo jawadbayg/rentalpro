@@ -8,6 +8,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <!-- DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -17,16 +23,23 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- In the <head> section -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- At the end of your <body> section, before closing </body> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     
     <style>
         /* Sidebar styling */
         .sidebar {
-            height: 100vh;
-            background:rgb(1, 35, 46);
+            height: calc(1000vh - 50px); 
+            background: rgb(1, 35, 46);
             padding: 20px;
             position: fixed;
             width: 250px;
-            top: 50px; /* adjust if navbar height changes */
+            top: 0px; /* Adjust if navbar height changes */
             overflow-y: auto;
         }
         .sidebar a {
@@ -40,14 +53,39 @@
             color: white;
         }
         .sidebar a:hover {
-            background:rgb(20, 97, 174);
+            background: rgb(20, 97, 174);
             color: #fff;
         }
+
+        /* Main Content */
         .content-area {
-            margin-left: 270px;
+            margin-left: 250px; /* Space for the sidebar */
             padding: 20px;
+            width: calc(100% - 250px); /* This will ensure content takes the rest of the space */
         }
 
+        /* Mobile View */
+        @media (max-width: 768px) {
+            .content-area {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+                height: 100%; 
+            }
+        }
+        .logo{
+            margin-top: -10px;
+            margin-bottom: 50px;
+            margin-left: 20px;
+            color: white;
+            font-family:'Times New Roman', Times, serif;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +94,7 @@
         <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
 
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ url('home') }}">
                     Rental Pro
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -70,6 +108,16 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         @guest
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('About us') }}</a>
+                                </li>
+                            @endif
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Contact us') }}</a>
+                                </li>
+                            @endif
                             @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -104,29 +152,35 @@
             </div>
         </nav>
 
-        <!-- Sidebar -->
-        @if (Auth::check())
-            @if (Auth::user()->hasRole('Admin'))
-            <div class="sidebar">
-                <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
-                <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
-                <a href="{{ route('products.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
-                <a href=""><i class="fa fa-box"></i> Invoices</a>
-            </div>
-            @elseif (Auth::user()->hasRole('User'))
+                @if (Auth::check())
+                    @if (Auth::user()->hasRole('Admin'))
+                        <div class="sidebar">
+                            <div class="logo">
+                                <h3>Rental Pro</h3>
+                            </div>
+    
+                    <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
+                    <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
+                    <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                    <a href=""><i class="fa fa-box"></i> Invoices</a>
+                </div>
+                @elseif (Auth::user()->hasRole('User'))
 
-            @elseif (Auth::user()->hasRole('FP'))
-            <div class="sidebar">
-                <a href="{{ route('products.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
-                <a href=""><i class="fa fa-box"></i> Invoices</a>
-            </div>
+                @elseif (Auth::user()->hasRole('FP'))
+                <div class="sidebar">
+                        <div class="logo">
+                            <h3>Rental Pro</h3>
+                        </div>
+                    <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                    <a href=""><i class="fa fa-box"></i> Invoices</a>
+                </div>
+                @endif
             @endif
-        @endif
-        <!-- Main Content -->
-        <main class="{{ Auth::check() && Auth::user()->hasRole('Admin') ? 'content-area' : 'content-area-user' }}">
-            @yield('content')
-        </main>
-        
+
+            <main class="content-area">
+                @yield('content')
+            </main>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </div>
 </body>
 </html>

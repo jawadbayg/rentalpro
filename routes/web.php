@@ -6,7 +6,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
-   
+use App\Http\Controllers\FleetController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -20,3 +21,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
 });
+
+
+Route::prefix('fleet')->name('fleet.')->group(function() {
+    Route::get('/', [FleetController::class, 'index'])->name('index');
+    Route::get('/create', [FleetController::class, 'create'])->name('create');
+    Route::post('/', [FleetController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [FleetController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [FleetController::class, 'update'])->name('update');
+    // Route::get('/{id}', [FleetController::class, 'show'])->name('show');
+});
+
