@@ -22,11 +22,11 @@
         /* Sidebar styling */
         .sidebar {
             height: 100vh;
-            background: #f8f9fa;
+            background:rgb(1, 35, 46);
             padding: 20px;
             position: fixed;
             width: 250px;
-            top: 70px; /* adjust if navbar height changes */
+            top: 50px; /* adjust if navbar height changes */
             overflow-y: auto;
         }
         .sidebar a {
@@ -37,21 +37,24 @@
             text-decoration: none;
             font-weight: 600;
             border-radius: 5px;
+            color: white;
         }
         .sidebar a:hover {
-            background: #343a40;
+            background:rgb(20, 97, 174);
             color: #fff;
         }
         .content-area {
             margin-left: 270px;
             padding: 20px;
         }
+
     </style>
 </head>
 <body>
     <div id="app">
         <!-- Top Navbar -->
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
+
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     Rental Pro
@@ -102,20 +105,25 @@
         </nav>
 
         <!-- Sidebar -->
-        @if (Auth::user()->hasRole('Admin'))
-        <div class="sidebar">
-            <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
-            <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
-            <a href="{{ route('products.index') }}"><i class="fa fa-box"></i> Manage Products</a>
-        </div>
-        @elseif (Auth::user()->hasRole('User'))
-        <div class="sidebar">
-            <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
-            
-        </div>
+        @if (Auth::check())
+            @if (Auth::user()->hasRole('Admin'))
+            <div class="sidebar">
+                <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
+                <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
+                <a href="{{ route('products.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                <a href=""><i class="fa fa-box"></i> Invoices</a>
+            </div>
+            @elseif (Auth::user()->hasRole('User'))
+
+            @elseif (Auth::user()->hasRole('FP'))
+            <div class="sidebar">
+                <a href="{{ route('products.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                <a href=""><i class="fa fa-box"></i> Invoices</a>
+            </div>
+            @endif
         @endif
         <!-- Main Content -->
-        <main class="content-area">
+        <main class="{{ Auth::check() && Auth::user()->hasRole('Admin') ? 'content-area' : 'content-area-user' }}">
             @yield('content')
         </main>
         
