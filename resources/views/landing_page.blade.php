@@ -8,8 +8,8 @@
         'https://i.ibb.co/gMmGPzQH/pexels-mikebirdy-112460.jpg',
     ]])
 
-    <section class="text-center py-16 bg-gray-100 dark:bg-gray-900">
-    <div class="container mt-5">
+    <div class="container mt-5 main-page-container">
+        <!-- <h2>Collection</h2> -->
         <div class="row">
             @foreach($fleets as $fleet)
                 <div class="col-md-4 mb-4">
@@ -29,7 +29,6 @@
                                     <li class="list-group-item"><strong>Type:</strong> {{ ucfirst($fleet->vehicle_type) }}</li>
                                 </ul>
                             </div>
-
                             <div class="card-footer text-center">
                                 <small class="text-muted">Registered: {{ \Carbon\Carbon::parse($fleet->registration_date)->format('d M, Y') }}</small>
                             </div>
@@ -39,5 +38,4 @@
             @endforeach
         </div>
     </div>
-    </section>
 @endsection

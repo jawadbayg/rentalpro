@@ -146,3 +146,17 @@ body{
     border-radius: 20px;
 
 }
+.main-page-container{
+    background-color: white;
+    padding: 25px;
+    border-radius: 25px;
+    width: 1800px !important;
+}
+.login-container{
+    width: 500px;
+}
+.register-container{
+    width: 500px;
+    margin-top: 40px;
+
+}

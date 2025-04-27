@@ -130,7 +130,7 @@
         <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
 
             <div class="container">
-                <a class="navbar-brand" href="{{ url('home') }}">
+                <a class="navbar-brand" href="{{ url('/') }}">
                     Rental Pro
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
