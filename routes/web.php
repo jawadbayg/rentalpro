@@ -7,19 +7,25 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FleetController;
+use App\Http\Controllers\LandingPageController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [LandingPageController::class, 'getFleet']);
+Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
   
 Auth::routes();
   
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
   
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
+
+    Route::get('/profile/settings/{id}', [UserController::class, 'profilePage'])->name('profile.settings');
+
+    Route::post('/profile/upload/{id}', [UserController::class, 'uploadProfilePicture'])->name('profile.upload');
+
 });
 
 

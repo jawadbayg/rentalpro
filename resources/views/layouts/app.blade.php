@@ -15,6 +15,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -86,6 +90,11 @@
             color: white;
             font-family:'Times New Roman', Times, serif;
         }
+        .content-area-guest {
+            width: 100%; 
+            margin-left: 0;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -133,8 +142,12 @@
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
+                               
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('profile.settings', Auth::user()->id) }}">
+                                        Profile Settings
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -163,23 +176,24 @@
                     <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
                     <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
                     <a href=""><i class="fa fa-box"></i> Invoices</a>
-                </div>
-                @elseif (Auth::user()->hasRole('User'))
+                    </div>
+                    @elseif (Auth::user()->hasRole('User'))
 
-                @elseif (Auth::user()->hasRole('FP'))
-                <div class="sidebar">
-                        <div class="logo">
-                            <h3>Rental Pro</h3>
-                        </div>
-                    <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
-                    <a href=""><i class="fa fa-box"></i> Invoices</a>
-                </div>
+                    @elseif (Auth::user()->hasRole('FP'))
+                    <div class="sidebar">
+                            <div class="logo">
+                                <h3>Rental Pro</h3>
+                            </div>
+                        <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                        <a href=""><i class="fa fa-box"></i> Invoices</a>
+                    </div>
+                    @endif
                 @endif
-            @endif
 
-            <main class="content-area">
-                @yield('content')
-            </main>
+                <main class="content-area @if(Auth::guest()) content-area-guest @endif">
+                    @yield('content')
+                </main>
+
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </div>
 </body>

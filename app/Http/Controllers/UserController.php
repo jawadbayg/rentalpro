@@ -11,6 +11,9 @@ use Hash;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Models\UserProfile;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
     
 class UserController extends Controller
 {
@@ -136,5 +139,43 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')
                         ->with('success','User deleted successfully');
+    }
+
+    public function profilePage($id)
+    {
+        $user = User::findOrFail($id); 
+
+        return view('partials.profile_settings', compact('user'));
+    }
+    public function uploadProfilePicture(Request $request, $id)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validate image
+        ]);
+    
+        $user = User::findOrFail($id); // Fetch user by ID
+    
+        // Store the uploaded file
+        $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+    
+        // Check if user already has a profile
+        $profile = $user->profile;
+    
+        if (!$profile) {
+            // Create new profile if not exists
+            $profile = new UserProfile();
+            $profile->user_id = $user->id;
+        } else {
+            // Delete old profile picture if exists
+            if ($profile->profile_picture) {
+                Storage::disk('public')->delete($profile->profile_picture);
+            }
+        }
+    
+        // Save new profile picture path
+        $profile->profile_picture = $path;
+        $profile->save();
+    
+        return redirect()->back()->with('success', 'Profile picture updated successfully!');
     }
 }

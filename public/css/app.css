@@ -13,6 +13,18 @@ body{
     display: inline-block; 
     text-align: center;
 }
+.btn-outline{
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+    color: rgb(0, 0, 0);
+    border-radius: 9px;
+    border: 1px solid black;
+    width: auto; 
+    min-width: 150px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+}
 
 #section1Carousal {
     height: 500px !important;
@@ -69,3 +81,30 @@ body{
 
 /* end here */
 
+/* landing page css */
+.cards_container{
+    background-color: rgb(255, 255, 255);
+    padding: 25px;
+    border-radius: 20px;
+    margin-top: 50px;
+    min-height: 500px;
+}
+.left_container{
+    border-radius: 20px;
+    min-height: 450px;
+}
+.right_container{
+    border-radius: 20px;
+    min-height: 450px;
+}
+.right_container_image{
+    border-radius: 16px;
+}
+.explore_more_section{
+    margin-bottom: 50px;
+}
+.modal-dialog {
+    margin-top: 20vh;
+}
+
+/* end here */
