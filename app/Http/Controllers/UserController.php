@@ -12,8 +12,10 @@ use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\UserProfile;
+use App\Models\UserValidation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use function PHPUnit\Framework\returnArgument;
     
 class UserController extends Controller
 {
@@ -150,32 +152,50 @@ class UserController extends Controller
     public function uploadProfilePicture(Request $request, $id)
     {
         $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validate image
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
     
-        $user = User::findOrFail($id); // Fetch user by ID
-    
-        // Store the uploaded file
+        $user = User::findOrFail($id); 
         $path = $request->file('profile_picture')->store('profile_pictures', 'public');
     
-        // Check if user already has a profile
         $profile = $user->profile;
     
         if (!$profile) {
-            // Create new profile if not exists
             $profile = new UserProfile();
             $profile->user_id = $user->id;
         } else {
-            // Delete old profile picture if exists
             if ($profile->profile_picture) {
                 Storage::disk('public')->delete($profile->profile_picture);
             }
         }
-    
-        // Save new profile picture path
         $profile->profile_picture = $path;
         $profile->save();
     
         return redirect()->back()->with('success', 'Profile picture updated successfully!');
+    }
+
+    public function createUserVerification(){
+        return view('partials.user_validation');
+    }
+    public function userValidationStore(Request $request)
+    {
+        $request->validate([
+            'identity_number' => 'required|numeric',
+            'license_number' => 'required|string',
+            'license_provider' => 'required|string|max:255',
+            'age' => 'required|numeric|min:18',
+            'address' => 'required|string|max:500',
+        ]);
+
+        UserValidation::create([
+            'user_id' => Auth::id(),
+            'identity_number' => $request->identity_number,
+            'license_number' => $request->license_number,
+            'license_provider' => $request->license_provider,
+            'age' => $request->age,
+            'address' => $request->address,
+        ]);
+
+        return redirect()->back()->with('success', 'Validation information submitted successfully.');
     }
 }

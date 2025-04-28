@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\VerificationController;
 
 Route::get('/', [LandingPageController::class, 'getFleet']);
 Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
@@ -26,6 +27,13 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::post('/profile/upload/{id}', [UserController::class, 'uploadProfilePicture'])->name('profile.upload');
 
+    // user verification page and store
+    Route::get('/user-verification', [UserController::class, 'createUserVerification'])->name('user.validation');
+    Route::post('/user-validation/store', [UserController::class, 'userValidationStore'])->name('user_validation.store');
+
+    // admin side user verification  
+    Route::get('/verification-requests', [VerificationController::class, 'index'])->name('verification_requests.index');
+    Route::post('/user-validation/approve', [VerificationController::class, 'approve'])->name('user_validation.approve');
 });
 
 

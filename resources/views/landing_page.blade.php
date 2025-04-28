@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+    @if (Auth::check() && $userValidated == false)
+    <div class="user_validation_msg">
+        Please do your verification in order to access the Rental Pro Services! 
+        <a href="{{ route('user.validation') }}" class="btn-outline-blank">Verify Now</a>
+    </div>
+    @endif
 
     @include('partials.section1', ['images' => [
         'https://img.ge/i/W0CKG96.jpg',
@@ -38,4 +44,17 @@
             @endforeach
         </div>
     </div>
+
+    <script>
+        window.addEventListener('scroll', function() {
+            var validationMsg = document.querySelector('.user_validation_msg');
+            var navbarHeight = document.querySelector('.navbar')?.offsetHeight || 70; 
+            if (window.scrollY > navbarHeight) {
+                validationMsg.classList.add('sticky');
+            } else {
+                validationMsg.classList.remove('sticky');
+            }
+        });
+    </script>
+
 @endsection

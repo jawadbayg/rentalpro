@@ -84,17 +84,19 @@
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      
+
       <div class="modal-header">
         <h5 class="modal-title" id="bookingModalLabel">Book Vehicle</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body">
-        <form action="" method="POST">
-          @csrf
-      
-          <input type="hidden" name="fleet_id" value="{{ $fleet->id }}">
+
+        @if(Auth::check())
+          <form action="" method="POST">
+            @csrf
+
+            <input type="hidden" name="fleet_id" value="{{ $fleet->id }}">
 
             <div class="mb-3">
                 <label for="from_date" class="form-label">From Date</label>
@@ -105,6 +107,7 @@
                 <label for="to_date" class="form-label">To Date</label>
                 <input type="text" id="to_date" name="to_date" class="form-control datepicker" required>
             </div>
+
             <div class="mb-3">
                 <label class="form-label">Booking Summary</label>
                 <div class="d-flex align-items-center">
@@ -125,16 +128,27 @@
                 </div>
             </div>
 
-          <div class="text-end">
-            <button type="submit" class="btn-black">Confirm Booking</button>
+            <div class="text-end">
+              <button type="submit" class="btn-black">Confirm Booking</button>
+            </div>
+
+          </form>
+
+        @else
+
+          <div class="text-center">
+            <p class="mb-4">Please login to book this vehicle.</p>
+            <a href="{{ route('login') }}" class="btn-black">Login</a>
           </div>
 
-        </form>
+        @endif
+
       </div>
 
     </div>
   </div>
 </div>
+
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

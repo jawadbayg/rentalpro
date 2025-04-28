@@ -38,6 +38,45 @@ body{
     text-align: center;
 }
 
+.btn-outline-blank{
+    background-color:none;
+    /* padding: 6px; */
+    color:white;
+    border-radius: 12px;
+    border: 2px solid white;
+    width: auto; 
+    min-width: 150px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+    margin-left: 24px;
+}
+.btn-outline-blank:hover{
+    background-color:white;
+    /* padding: 6px; */
+    color:black;
+    border-radius: 12px;
+    border: 2px solid white;
+    width: auto; 
+    min-width: 150px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+    margin-left: 24px;
+}
+
+.datatable-btn{
+    background-color:rgb(1, 35, 46);
+    padding: 5px;
+    color: white;
+    border-radius: 9px;
+    width: auto; 
+    min-width: 90px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+}
+
 #section1Carousal {
     height: 500px !important;
 }
@@ -153,6 +192,7 @@ body{
     border-radius: 25px;
     width: 1800px !important;
 }
+
 .login-container{
     width: 500px;
 }
@@ -160,4 +200,76 @@ body{
     width: 500px;
     margin-top: 40px;
 
+}
+
+.user_validation_msg {
+    background-color: red;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    padding-top: 5px;
+    width: 100%;
+    transition: all 0.5s ease;
+}
+
+.user_validation_msg.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+
+
+.user_validation_page_container{
+    background-color: white;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 20px;
+}
+
+.verification_request_container{
+    background-color: white;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 20px;
+}
+
+.swal2-confirm{
+    background-color:rgb(1, 35, 46);
+}
+.swal2-icon{
+    color:rgb(1, 35, 46);
+    border-color:rgb(1, 35, 46) ;
+}
+.swal2-icon.swal2-warning{
+    color:rgb(1, 35, 46);
+    border-color:rgb(1, 35, 46) ;
+}
+.swal2-loading {
+    color:rgb(1, 35, 46);
+}
+
+
+
+thead, tbody, tfoot, tr, td, th{
+    border-style: none;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+background-color: transparent;
+}
+
+table.dataTable thead th, table.dataTable thead td{
+    background-color:  rgb(1, 35, 46);
+color: white;
+}
+.dataTables_wrapper .dataTables_filter input{
+    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 5px;
+    padding-left: 10px;
 }

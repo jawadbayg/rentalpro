@@ -19,6 +19,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     
+    <!-- sweet alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -84,39 +87,36 @@
             }
         }
         .logo {
-    margin-top: -10px;
-    margin-bottom: 50px;
-    margin-left: 20px;
-    color: white;
-    font-family: 'Times New Roman', Times, serif;
-}
+            margin-top: -10px;
+            margin-bottom: 50px;
+            margin-left: 20px;
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+        }
 
-.logo-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-}
+        .logo-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-.logo-btn:hover,
-.logo-btn:focus,
-.logo-btn:active {
-    background: none;
-    border: none;
-    outline: none;
-    color: inherit;
-    text-decoration: none;
-    box-shadow: none;
-}
+        .logo-btn:hover,
+        .logo-btn:focus,
+        .logo-btn:active {
+            background: none;
+            border: none;
+            outline: none;
+            color: inherit;
+            text-decoration: none;
+            box-shadow: none;
+        }
   
-
-
-
         .content-area-guest {
             width: 100%; 
             margin-left: 0;
@@ -165,19 +165,27 @@
                                 </li>
                             @endif
                         @else
+                            @if (Auth::user()->hasRole('User'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('About us') }}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Contact us') }}</a>
+                                </li>
+                            @endif
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
-                               
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('profile.settings', Auth::user()->id) }}">
                                         Profile Settings
                                     </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -206,6 +214,8 @@
                     <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
                     <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
                     <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                    <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Bookings</a>
+                    <a href="{{ route('verification_requests.index') }}"><i class="fa fa-file"></i> Verification Requests</a>
                     <a href=""><i class="fa fa-box"></i> Invoices</a>
                     </div>
                     @elseif (Auth::user()->hasRole('User'))
@@ -225,9 +235,11 @@
                     @endif
                 @endif
 
-                <main class="content-area @if(Auth::guest()) content-area-guest @endif">
+                <main class="content-area @if(Auth::guest() || (Auth::check() && Auth::user()->hasRole('User'))) content-area-guest @endif">
                     @yield('content')
                 </main>
+
+
 
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </div>
