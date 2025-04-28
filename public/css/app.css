@@ -1,6 +1,7 @@
 /* partials/section1 css  */
 body{
-    background-color: rgb(223, 223, 223);
+    /* background-color: rgb(223, 223, 223); */
+    background-color: rgb(238, 238, 238);
 }
 .btn-black{
     background-color: black;
