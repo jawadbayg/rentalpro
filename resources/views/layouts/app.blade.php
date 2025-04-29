@@ -167,10 +167,13 @@
                         @else
                             @if (Auth::user()->hasRole('User'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('About us') }}</a>
+                                    <a class="nav-link" href="">{{ __('About us') }}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Contact us') }}</a>
+                                    <a class="nav-link" href="">{{ __('Contact us') }}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('customer.bookings.index') }}">{{ __('My Bookings') }}</a>
                                 </li>
                             @endif
 

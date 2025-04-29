@@ -29,10 +29,14 @@ class Fleet extends Model
         return $this->belongsTo(User::class);  
     }
     // Fleet.php
-public function images()
-{
-    return $this->hasMany(FleetImage::class);
-}
+    public function images()
+    {
+        return $this->hasMany(FleetImage::class);
+    }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'fleet_id');
+    }
 
 
 }

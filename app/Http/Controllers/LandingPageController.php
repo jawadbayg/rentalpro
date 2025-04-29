@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Fleet;
 use App\Models\UserValidation;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
 
@@ -23,11 +24,23 @@ class LandingPageController extends Controller
     }
     public function show($id)
     {
+        $auth_id = Auth::user()->id;
         $fleets = Fleet::where('status', 'active')
         ->where('id', '!=', $id)
         ->take(3)->get(); // for showing more cards below show page
+
+        $already_booked = false;
+        $bookedVehicles = Booking::where('customer_id',$auth_id)->
+        where('is_cancelled',null)->get();
+        if($bookedVehicles){
+            foreach($bookedVehicles as $vehicle){
+                if ($vehicle->fleet_id == $id) {
+                    $already_booked = true;
+            }
+        }
         $fleet = Fleet::findOrFail($id);
-        return view('vehicle.show', compact('fleets','fleet'));
+        return view('vehicle.show', compact('fleets','fleet','already_booked'));
     }
 
+}
 }

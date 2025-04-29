@@ -9,6 +9,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\BookingController;
+
 
 Route::get('/', [LandingPageController::class, 'getFleet']);
 Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
@@ -34,6 +36,14 @@ Route::group(['middleware' => ['auth']], function() {
     // admin side user verification  
     Route::get('/verification-requests', [VerificationController::class, 'index'])->name('verification_requests.index');
     Route::post('/user-validation/approve', [VerificationController::class, 'approve'])->name('user_validation.approve');
+
+    // booking 
+    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/my-bookings', [BookingController::class, 'customer_index'])->name('customer.bookings.index');
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+
+
+
 });
 
 
