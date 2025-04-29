@@ -8,7 +8,7 @@ use App\Models\Fleet;
 use Illuminate\Support\Facades\Auth; 
 use App\Mail\BookingConfirmation;
 use Illuminate\Support\Facades\Mail;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class BookingController extends Controller
 {
     /**
@@ -61,6 +61,7 @@ class BookingController extends Controller
     }
     public function cancel($id)
     {
+        $auth_id = Auth::user()->id;
         $booking = Booking::findOrFail($id);
         if (Auth::id() !== $booking->customer_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -72,6 +73,24 @@ class BookingController extends Controller
 
         return response()->json(['message' => 'Booking cancelled successfully.']);
     }
+    
 
+    public function invoice($id)
+    {
+        $booking = Booking::with('fleet')->findOrFail($id);
+
+        $customer_id = $booking->customer_id;
+        $customer = \App\Models\User::find($customer_id);
+
+        $fp_id = $booking->fp_id;
+        $fp = \App\Models\User::find($fp_id);
+
+        $fleet_id = $booking->fleet_id;
+        $fleet = Fleet::find($fleet_id);
+
+        $pdf = Pdf::loadView('invoice.invoice', compact('booking','customer','fp','fleet'));
+        return $pdf->stream("invoice-{$booking->booking_no}.pdf");
+    }
+    
 
 }

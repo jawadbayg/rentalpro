@@ -34,7 +34,7 @@
                                 <td>{{ $booking->payment_status }}</td>
                                 <td>
                                     <a href="{{ route('vehicle.show', $booking->fleet->id) }}" class="btn-black-sm">View</a>
-                                    <a href="{{ route('vehicle.show', $booking->fleet->id) }}" class="btn-black-sm">Invoice</a>
+                                    <a href="{{ route('bookings.invoice', $booking->id) }}" target="_blank" class="btn-black-sm">Invoice</a>
                                     <a href="#" class="btn-black-sm" data-bs-toggle="modal" data-bs-target="#cancelModal" data-booking-id="{{ $booking->id }}">
                                         Cancel
                                     </a>
