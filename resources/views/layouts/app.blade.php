@@ -25,6 +25,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -126,12 +127,13 @@
 </head>
 <body>
     <div id="app">
+        @if (!in_array(Route::currentRouteName(), ['login', 'register', 'password.request']))
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
 
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Rental Pro
+                <img src="{{ asset('logo.png') }}"  style="width: 100px; height: auto;">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -160,9 +162,9 @@
                                 </li>
                             @endif
                             @if (Route::has('register'))
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
+                                </li> -->
                             @endif
                         @else
                             @if (Auth::user()->hasRole('User'))
@@ -202,7 +204,7 @@
                 </div>
             </div>
         </nav>
-
+@endif
                 @if (Auth::check())
                     @if (Auth::user()->hasRole('Admin'))
                         <div class="sidebar">
