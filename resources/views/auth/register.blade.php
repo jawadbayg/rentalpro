@@ -12,17 +12,16 @@
         </div>
 
         <div class="col-md-6 position-relative form-container">
-            <div class="position-absolute logo-container">
-                <img src="{{ asset('logo-black.png') }}" style="width: 120px; height: auto;">
-                <div class="login-p">
-                    <p> Register to access full service</p>
+            <div class="logo-container d-flex flex-column align-items-center w-100">
+                <div class="logo w-100 text-start" style="max-width: 560px; padding-top: 30px; margin-bottom: -5px;">
+                    <h1>Rental Pro</h1>
                 </div>
-                <div class="abc">
-                    <p>Fill in your details to create an account.</p>
+                <div class="login-p w-100 text-start" style="max-width: 560px;">
+                    <h2>Login or Signup to access full service</h2>
                 </div>
             </div>
 
-            <div class="d-flex justify-content-center h-100 login-form">
+            <div class="d-flex justify-content-center login-form">
                 <form method="POST" action="{{ route('register') }}" class="w-100" style="max-width: 560px;">
                     @csrf
 
@@ -32,9 +31,9 @@
                         <input id="name" type="text" 
                                class="form-control form-control-lg custom-input @error('name') is-invalid @enderror" 
                                name="name" value="{{ old('name') }}" 
-                               required autocomplete="name" autofocus>
+                                autocomplete="name" autofocus>
                         @error('name')
-                            <span class="invalid-feedback" role="alert">
+                            <span class="text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -43,12 +42,12 @@
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                        <input id="email" type="email" 
+                        <input id="email" type="text" 
                                class="form-control form-control-lg custom-input @error('email') is-invalid @enderror" 
                                name="email" value="{{ old('email') }}" 
-                               required autocomplete="email">
+                                autocomplete="email">
                         @error('email')
-                            <span class="invalid-feedback" role="alert">
+                            <span class="text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -59,9 +58,9 @@
                         <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
                         <input id="password" type="password" 
                                class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
-                               name="password" required autocomplete="new-password">
+                               name="password"  autocomplete="new-password">
                         @error('password')
-                            <span class="invalid-feedback" role="alert">
+                            <span class="text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -71,8 +70,13 @@
                     <div class="mb-3">
                         <label for="password-confirm" class="form-label">Confirm Password <span class="text-danger">*</span></label>
                         <input id="password-confirm" type="password" 
-                               class="form-control form-control-lg custom-input" 
-                               name="password_confirmation" required autocomplete="new-password">
+                                class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
+                               name="password_confirmation"  autocomplete="new-password">
+                               @error('password')
+                            <span class="text-danger" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
 
                     <!-- Role Selection -->
@@ -86,6 +90,11 @@
                             <input type="radio" class="form-check-input" id="role_user" name="role" value="User">
                             <label class="form-check-label" for="role_user">Customer</label>
                         </div>
+                        @error('role')
+                            <span class="text-danger" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
 
                     <!-- Register Button -->
@@ -113,25 +122,22 @@
     background-color: white;
 }
 .logo-container {
-    padding-left: 80px;
-    padding-top: 50px;
+    /* padding-left: 80px; */
+    /* padding-top: 50px; */
 }
 .login-p {
-    padding-left: 16px;
+    /* padding-left: 16px; */
     font-family: 'Poppins', sans-serif;
     font-size: 38px;
     line-height: 50px;
     font-weight: 500;
     margin-top: 15px;
 }
-.abc {
-    font-family: 'Poppins', sans-serif;
-    margin-top: -15px;
-    padding-left: 16px;
-    margin-bottom: 50px;
-}
-.login-form {
-    padding-top: 280px;
+.logo{
+    font-family: 'Poppins',sans-serif;
+    color: rgb(1, 35, 46);
+    padding-left: 0px !important;
+    margin-left: 0px !important;
 }
 .register-msg p {
     font-family: 'Poppins', sans-serif;
@@ -143,9 +149,6 @@
 }
 .sign-up-btn:hover {
     text-decoration: underline;
-}
-.custom-input {
-    width: 570px;
 }
 </style>
 @endsection

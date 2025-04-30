@@ -50,14 +50,31 @@ class BookingController extends Controller
     }
     public function customer_index()
     {
+        $fleet = '';
+        $customer = '';
         $auth_id = Auth::user()->id;
-        
-        $bookings = Booking::with('fleet')
-        ->where('customer_id', $auth_id)
-        ->where('is_cancelled' , null)
-        ->get();
+        if (Auth::user()->hasRole('Admin')) {
+            $bookings = Booking::with('fleet')->get();
+        }
+        if (Auth::user()->hasRole('FP')) {
+            $bookings = Booking::with('fleet')
+            ->where('fp_id',$auth_id)
+            ->get();
+        }  else {
+            $auth_id = Auth::id();
+            $bookings = Booking::with('fleet')
+                ->where('customer_id', $auth_id)
+                ->whereNull('is_cancelled')
+                ->get();
+        }
 
-        return view('customer-bookings.index', compact('bookings'));
+        foreach ($bookings as $booking) {
+            $customer = \App\Models\User::find($booking->customer_id);
+            $fp = \App\Models\User::find($booking->fp_id);
+            $fleet = Fleet::find($booking->fleet_id);
+        }
+
+        return view('customer-bookings.index', compact('bookings','fleet','customer'));
     }
     public function cancel($id)
     {

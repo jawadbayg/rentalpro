@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -28,9 +30,36 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-    /**
-     * Override the authenticated method to redirect based on role.
-     */
+    public function login(Request $request)
+    {
+        // Custom validation
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'string', 'email', 'regex:/^[\w\._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i'],
+            'password' => ['required', 'string', 'min:8'],
+        ], [
+            'email.required' => 'Email is required.',
+            'email.email' => 'Email must be a valid address.',
+            'email.regex' => 'Please enter a valid email format.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput($request->only('email', 'remember'));
+        }
+
+        // Attempt login
+        if ($this->attemptLogin($request)) {
+            return $this->sendLoginResponse($request);
+        }
+
+        // On failed login
+        return redirect()->back()
+            ->withErrors(['email' => 'These credentials do not match our records.'])
+            ->withInput($request->only('email', 'remember'));
+    }
     protected function authenticated($request, $user)
     {
         if ($user->hasRole('User')) {
