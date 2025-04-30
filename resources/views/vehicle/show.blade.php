@@ -29,7 +29,7 @@
                         Already Booked
                     </button>
                     @else
-                        <button class="btn-black mt-3" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
+                        <button class="btn-blue mt-3" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
                     @endif
 
                 </div>
@@ -80,7 +80,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ $item->vehicle_name }}</h5>
                         <p class="card-text">{{ $item->vehicle_type }}</p>
-                        <a href="{{ route('vehicle.show', $item->id) }}" class="btn btn-black">View Details</a>
+                        <a href="{{ route('vehicle.show', $item->id) }}" class="btn-blue">View Details</a>
                     </div>
                 </div>
             </div>

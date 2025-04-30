@@ -111,6 +111,7 @@ body{
 }
 
 #section1Carousal {
+    font-family: 'Poppins',sans-serif;
     height: 500px !important;
 }
 
@@ -140,6 +141,7 @@ body{
  
 /* FP side fleet index css  */
 .table-card{
+    font-family: 'Poppins',sans-serif;
     background-color: rgb(255, 255, 255);
     padding: 25px;
     border-radius: 20px;
@@ -153,11 +155,13 @@ body{
     border-radius: 10px;  /* Round the corners */
 }
 .create-fleet{
+    font-family: 'Poppins',sans-serif;
     background-color: rgb(255, 255, 255);
     border-radius: 20px;
     padding: 30px;
 }
 .edit-fleet{
+    font-family: 'Poppins',sans-serif;
     background-color: rgb(255, 255, 255);
     border-radius: 20px;
     padding: 30px;
@@ -167,6 +171,7 @@ body{
 
 /* landing page css */
 .cards_container{
+    font-family: 'Poppins',sans-serif;
     background-color: rgb(255, 255, 255);
     padding: 25px;
     border-radius: 20px;
@@ -185,6 +190,7 @@ body{
     border-radius: 16px;
 }
 .explore_more_section{
+    font-family: 'Poppins',sans-serif;
     margin-bottom: 50px;
 }
 .modal-dialog {
@@ -195,6 +201,7 @@ body{
 /* end here */
 
 .profile_settings_container{
+    font-family: 'Poppins',sans-serif;
     background-color: white;
     padding: 20px;
     border-radius: 20px;
@@ -221,6 +228,7 @@ body{
 
 }
 .main-page-container{
+    font-family: 'Poppins',sans-serif;
     background-color: white;
     padding: 25px;
     border-radius: 25px;
@@ -260,10 +268,12 @@ body{
 
 
 .user_validation_page_container{
+    font-family: 'Poppins',sans-serif;
     background-color: white;
     padding: 20px;
     margin-top: 30px;
     border-radius: 20px;
+    margin-bottom: 30px;
 }
 
 .verification_request_container{
@@ -313,10 +323,14 @@ color: white;
     margin-left: 16px;
 }
 .bookings-container{
+    font-family: 'Poppins',sans-serif;
     background-color: white;
     padding: 20px;
     margin-top: 30px;
     border-radius: 20px;
+}
+#cancelModal{
+    font-family: 'Poppins',sans-serif;
 }
 .form-control:focus{
     box-shadow:none !important;

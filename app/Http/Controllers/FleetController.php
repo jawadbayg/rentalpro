@@ -34,27 +34,54 @@ class FleetController extends Controller
 
     public function store(Request $request)
     {
-       
         try {
             $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'vehicle_no' => 'required|integer|unique:fleet,vehicle_no',
-                'vehicle_name' => 'required|string|max:255',
-                'vehicle_owner_name' => 'required|string|max:255',
-                'registration_date' => 'required|date',
-                'vehicle_type' => 'required|string|max:255',
-                'license_plate' => 'required|string|max:255|unique:fleet,license_plate',
-                'manufacturing_year' => 'required|integer|min:1900|max:' . date('Y'),
-                'status' => 'required|in:active,inactive,under_maintenance',
-                'mileage' => 'nullable|integer',
-                'fuel_type' => 'nullable|string|max:255',
-                'images' => 'nullable|array',
-                'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+                'user_id' => ['required', 'exists:users,id'],
+                'vehicle_no' => ['required', 'regex:/^[0-9]{4,}$/', 'unique:fleet,vehicle_no'],
+                'vehicle_name' => ['required', 'regex:/^[a-zA-Z0-9\s\-]+$/', 'max:255'],
+                'vehicle_owner_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
+                'registration_date' => ['required', 'date'],
+                'vehicle_type' => ['required', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
+                'license_plate' => ['required', 'regex:/^[A-Z0-9\-]{4,}$/', 'max:255', 'unique:fleet,license_plate'],
+                'manufacturing_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
+                'status' => ['required', 'in:active,inactive,under_maintenance'],
+                'mileage' => ['nullable', 'integer'],
+                'fuel_type' => ['nullable', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
+                'images' => ['nullable', 'array'],
+                'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            ], [
+                'vehicle_no.required' => 'Vehicle number is required.',
+                'vehicle_no.regex' => 'Vehicle number must be numeric and at least 4 digits.',
+                'vehicle_no.unique' => 'This vehicle number is already in use.',
+
+                'vehicle_name.required' => 'Vehicle name is required.',
+                'vehicle_name.regex' => 'Vehicle name must contain only letters, numbers, spaces, or dashes.',
+
+                'vehicle_owner_name.required' => 'Owner name is required.',
+                'vehicle_owner_name.regex' => 'Owner name must contain only letters and spaces.',
+
+                'license_plate.required' => 'License plate is required.',
+                'license_plate.regex' => 'License plate format is invalid.',
+                'license_plate.unique' => 'This license plate is already in use.',
+
+                'vehicle_type.required' => 'Vehicle type is required.',
+                'vehicle_type.regex' => 'Vehicle type must contain only letters and spaces.',
+
+                'manufacturing_year.required' => 'Manufacturing year is required.',
+                'manufacturing_year.min' => 'Manufacturing year cannot be before 1900.',
+                'manufacturing_year.max' => 'Manufacturing year cannot be in the future.',
+
+                'status.required' => 'Vehicle status is required.',
+                'status.in' => 'Invalid status selected.',
+
+                'images.*.image' => 'Each file must be an image.',
+                'images.*.mimes' => 'Images must be jpeg, png, jpg, gif, or svg.',
+                'images.*.max' => 'Each image must be less than 2MB.',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            dd($e->errors());
+            return back()->withErrors($e->errors())->withInput();
         }
-        
+
         $fleet = new Fleet();
         $fleet->user_id = $request->user_id;
         $fleet->vehicle_no = $request->vehicle_no;
@@ -68,19 +95,18 @@ class FleetController extends Controller
         $fleet->mileage = $request->mileage;
         $fleet->fuel_type = $request->fuel_type;
         $fleet->rental_status = 'Available';
-    
         $fleet->save();
-    
+
         if ($request->has('images')) {
             foreach ($request->file('images') as $image) {
                 $imagePath = $image->store('fleet_images', 'public');
-                $fleetImage = new FleetImage();
-                $fleetImage->fleet_id = $fleet->id;
-                $fleetImage->image = $imagePath; 
-                $fleetImage->save();
+                FleetImage::create([
+                    'fleet_id' => $fleet->id,
+                    'image' => $imagePath,
+                ]);
             }
         }
-    
+
         return redirect()->route('fleet.index')->with('success', 'Vehicle added successfully!');
     }
     public function edit($id)

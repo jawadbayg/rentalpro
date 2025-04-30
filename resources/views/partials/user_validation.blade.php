@@ -25,32 +25,62 @@
         @csrf
 
         <div class="mb-3">
-            <label for="identity_number" class="form-label">Identity Number</label>
-            <input type="number" class="form-control" id="identity_number" name="identity_number" required>
+            <label for="identity_number" class="form-label">Identity Number<span class="text-danger">*</span></label>
+            <input type="number" 
+                class="form-control @error('identity_number') is-invalid @enderror" 
+                id="identity_number" name="identity_number" value="{{ old('identity_number') }}" placeholder="Enter you legal identification number (eg. 123456789)" >
+            @error('identity_number')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="mb-3">
-            <label for="license_number" class="form-label">License Number</label>
-            <input type="text" class="form-control" id="license_number" name="license_number" required>
+            <label for="license_number" class="form-label">License Number<span class="text-danger">*</span></label>
+            <input type="text" 
+                class="form-control @error('license_number') is-invalid @enderror" 
+                id="license_number" name="license_number" value="{{ old('license_number') }}" placeholder="Enter you Vehicle License number (eg. RP1234)">
+            @error('license_number')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="mb-3">
-            <label for="license_provider" class="form-label">License Provider</label>
-            <input type="text" class="form-control" id="license_provider" name="license_provider" required>
+            <label for="license_provider" class="form-label">License Provider<span class="text-danger">*</span></label>
+            <input type="text" 
+                class="form-control @error('license_provider') is-invalid @enderror" 
+                id="license_provider" name="license_provider" value="{{ old('license_provider') }}" placeholder="Enter Country (eg. England)" >
+            @error('license_provider')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="mb-3">
-            <label for="age" class="form-label">Age</label>
-            <input type="number" class="form-control" id="age" name="age" required min="18">
-        </div>
+            <label for="age" class="form-label">Age<span class="text-danger">*</span></label>
+            <input type="number" 
+                class="form-control @error('age') is-invalid @enderror" 
+                id="age" name="age"  value="{{ old('age') }}" placeholder="Enter your age - min 18">
+        @error('age')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
 
-        <div class="mb-3">
-            <label for="address" class="form-label">Address</label>
-            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-        </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+        <textarea 
+            class="form-control @error('address') is-invalid @enderror" 
+            id="address" 
+            name="address" 
+            rows="3" 
+            placeholder="Enter your full address including street, city, and zip code">{{ old('address') }}</textarea>
+        @error('address')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
 
-        <button type="submit" class="btn-black mt-2">Submit Verification</button>
-    </form>
+
+    <button type="submit" class="btn-black mt-2">Submit Verification</button>
+</form>
+
 </div>
 
 <script>

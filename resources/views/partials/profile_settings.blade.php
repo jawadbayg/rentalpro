@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-2 profile_settings_container">
+<div class="container mt-4 profile_settings_container">
     <h2>Profile Settings</h2>
 
     <div class="card">
@@ -38,7 +38,7 @@
 
                 <!-- Save Button -->
                 <div class="text-end">
-                    <button type="submit" class="btn-black">Save Changes</button>
+                    <button type="submit" class="btn-blue">Save Changes</button>
                 </div>
 
             </form>

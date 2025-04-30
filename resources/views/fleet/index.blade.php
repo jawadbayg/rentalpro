@@ -3,7 +3,7 @@
 @section('content')
    
 
-        <a href="{{ route('fleet.create') }}" class="btn-black mb-3">
+        <a href="{{ route('fleet.create') }}" class="btn-blue mb-3">
            + Add Vehicle
         </a>
         <div class="table-card">
