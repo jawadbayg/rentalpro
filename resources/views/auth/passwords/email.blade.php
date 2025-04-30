@@ -11,20 +11,19 @@
                      class="img-cover h-100 w-100">
             </div>
         </div>
-
+        
         <!-- Right Side Form -->
         <div class="col-md-6 position-relative form-container">
-            <div class="position-absolute logo-container">
-                <img src="{{ asset('logo-black.png') }}" style="width: 120px; height: auto;">
-                <div class="login-p">
-                    <p>Forgot Your Password?</p>
-                </div>
-                <div class="abc">
-                    <p>No worries! Enter your email and we’ll send you a reset link.</p>
-                </div>
+            <div class="logo-container d-flex flex-column align-items-center w-100">
+            <div class="logo w-100 text-start" style="max-width: 560px; padding-top: 30px; margin-bottom: -5px;">
+                <h1>Rental Pro</h1>
             </div>
+            <div class="login-p w-100 text-start" style="max-width: 560px;">
+                <h2>No worries! Enter your email and we’ll send you a reset link</h2>
+            </div>
+        </div>
 
-            <div class="d-flex justify-content-center h-100 login-form">
+            <div class="d-flex justify-content-center login-form">
                 <form method="POST" action="{{ route('password.email') }}" class="w-100" style="max-width: 570px;">
                     @csrf
 
@@ -73,11 +72,11 @@
     background-color: white;
 }
 .logo-container {
-    padding-left: 85px;
+    /* padding-left: 85px; */
     padding-top: 50px;
 }
 .login-p {
-    padding-left: 16px;
+    /* padding-left: 16px; */
     font-family: 'Poppins', sans-serif;
     font-size: 38px;
     line-height: 50px;
@@ -87,15 +86,21 @@
 .abc {
     font-family: 'Poppins', sans-serif;
     margin-top: -15px;
-    padding-left: 16px;
+    /* padding-left: 16px; */
     margin-bottom: 50px;
 }
+.logo{
+    font-family: 'Poppins',sans-serif;
+    color: rgb(1, 35, 46);
+    padding-left: 0px !important;
+    margin-left: 0px !important;
+}
 .login-form {
-    padding-top: 320px;
+    padding-top: 50px;
 }
-.custom-input {
+/* .custom-input {
     width: 570px;
-}
+} */
 
 </style>
 @endsection

@@ -96,12 +96,12 @@
         }
 
         .logo-btn {
+            font-family: 'Poppins', sans-serif;
             background: none;
             border: none;
             padding: 0;
             margin: 0;
             color: inherit;
-            font-family: inherit;
             font-size: inherit;
             text-decoration: none;
             cursor: pointer;
@@ -123,17 +123,22 @@
             margin-left: 0;
             padding: 0;
         }
+        .navbar .nav-link {
+            font-family: 'Poppins', sans-serif !important;
+        }
     </style>
 </head>
 <body>
     <div id="app">
-        @if (!in_array(Route::currentRouteName(), ['login', 'register', 'password.request']))
+        @if (!in_array(Route::currentRouteName(), ['login', 'register', 'password.request', 'password.reset']))
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
 
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="{{ asset('logo.png') }}"  style="width: 100px; height: auto;">
+                    <button class="logo-btn">
+                        Rental Pro
+                    </button>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -219,7 +224,7 @@
                     <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
                     <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
                     <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
-                    <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Bookings</a>
+                    <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
                     <a href="{{ route('verification_requests.index') }}"><i class="fa fa-file"></i> Verification Requests</a>
                     <a href=""><i class="fa fa-box"></i> Invoices</a>
                     </div>
@@ -235,6 +240,7 @@
                             </h3>
                         </div>
                         <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
+                        <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
                         <a href=""><i class="fa fa-box"></i> Invoices</a>
                     </div>
                     @endif

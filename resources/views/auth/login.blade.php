@@ -11,49 +11,50 @@
         </div>
         <div class="col-md-6 position-relative form-container">
 
-            <div class="position-absolute logo-container">
-                <img src="{{ asset('logo-black.png') }}"  style="width: 120px; height: auto;">
-            
-                <div class="login-p">
-                    <p> Login or Signup to access full service</p>
-                </div>
-                <div class="abc">
-                    <p>Enter the information you entered while Login.</p>
-                </div>
+        <div class="logo-container d-flex flex-column align-items-center w-100">
+            <div class="logo w-100 text-start" style="max-width: 560px; padding-top: 30px; margin-bottom: -5px;">
+                <h1>Rental Pro</h1>
             </div>
-            <div class="d-flex justify-content-center h-100 login-form">
+            <div class="login-p w-100 text-start" style="max-width: 560px;">
+                <h2>Login or Signup to access full service</h2>
+            </div>
+        </div>
+
+            <div class="d-flex justify-content-center login-form">
             
                 <form method="POST" action="{{ route('login') }}" class="w-100" style="max-width: 560px;">
                     @csrf
+                    <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label">
                             {{ __('Email Address') }} <span class="text-danger">*</span>
                         </label>
                         <input id="email" type="email" 
-                            class="form-control form-control-lg custom-input @error('email') is-invalid @enderror" 
+                        class="form-control form-control-lg custom-input @error('email') is-invalid @enderror" 
                             name="email" value="{{ old('email') }}" 
-                            required autocomplete="email" autofocus>
-
+                            autocomplete="email" autofocus>
                         @error('email')
-                            <span class="invalid-feedback" role="alert">
+                            <span class="text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
                     </div>
+
+                    <!-- Password -->
                     <div class="mb-3">
                         <label for="password" class="form-label">
                             {{ __('Password') }} <span class="text-danger">*</span>
                         </label>
                         <input id="password" type="password" 
-                            class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
-                            name="password" required autocomplete="current-password">
-
+                        class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
+                            name="password"  autocomplete="current-password">
                         @error('password')
-                            <span class="invalid-feedback" role="alert">
+                            <span class="text-danger" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
                     </div>
+
                     <div class="row align-items-center mb-3">
                         <div class="col-md-6">
                             <div class="form-check">
@@ -94,12 +95,24 @@
 .form-container{
     background-color: white
 }
-.logo-container{
-    padding-left: 85px;
-    padding-top: 50px;
+.logo-container {
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 15px; /* responsive vertical/horizontal padding */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+.logo-container > div {
+    max-width: 560px;  /* match the form width */
+    width: 100%;
+    text-align: center;
+}
+
 .login-p {
-    padding-left: 16px;
     font-family: 'Poppins', sans-serif;
     font-size: 38px;
     line-height: 50px;
@@ -109,11 +122,7 @@
 .abc{
     font-family: 'Poppins', sans-serif;
     margin-top: -15px;
-    padding-left: 16px;
     margin-bottom: 50px;
-}
-.login-form{
-    padding-top: 320px;
 }
 .register-msg p {
     font-family: 'Poppins', sans-serif;
@@ -128,8 +137,14 @@
 .sign-up-btn:hover {
     text-decoration: underline;
 }
-.custom-input{
+/* .custom-input{
     width: 570px;
+} */
+.logo{
+    font-family: 'Poppins',sans-serif;
+    color: rgb(1, 35, 46);
+    padding-left: 0px !important;
+    margin-left: 0px !important;
 }
 </style>
 @endsection
