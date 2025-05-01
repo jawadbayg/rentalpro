@@ -167,6 +167,64 @@ class BookingController extends Controller
         $pdf = Pdf::loadView('invoice.invoice', compact('booking','customer','fp','fleet'));
         return $pdf->stream("invoice-{$booking->booking_no}.pdf");
     }
-    
 
-}
+    public function checkDate(Request $request)
+    {
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+
+        if ($fromDate) {
+            $bookingExists = Booking::whereNull('is_cancelled')
+                ->whereDate('from_date', '<=', $fromDate)
+                ->whereDate('to_date', '>=', $fromDate)
+                ->exists();
+
+            if ($bookingExists) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Vehicle is not available on this date.'
+                ]);
+            } else {
+                return response()->json([
+                    'available' => true,
+                    'message' => 'Vehicle is available on this date.'
+                ]);
+            }
+        }
+
+        if ($toDate) {
+            $bookingExists = Booking::whereNull('is_cancelled')
+                ->whereDate('from_date', '<=', $toDate)
+                ->whereDate('to_date', '>=', $toDate)
+                ->first();
+
+            // if ($bookingExists) {
+            //     if ($bookingExists->from_date > $fromDate && $bookingExists->from_date <= $toDate) {
+            //         return response()->json([
+            //             'available' => false,
+            //             'message' => 'Vehicle is only available up to ' . $bookingExists->from_date,
+            //         ]);
+            //     }   
+            // }
+            
+            if ($bookingExists) {
+                return response()->json([
+                    'available' => false,
+                    'message' => 'Vehicle is not available on this date.'
+                ]);
+            } else {
+                return response()->json([
+                    'available' => true,
+                    'message' => 'Vehicle is available on this date.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'available' => true,
+            'message' => 'Vehicle is available on this date.'
+        ]);
+    }
+
+        
+    }

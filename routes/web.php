@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/invoices', [BookingController::class, 'invoiceIndex'])->name('invoices.index');
     Route::get('/invoices/{id}/download', [BookingController::class, 'invoiceDownload'])->name('invoices.download');
 
-
+    Route::post('/check-date', [BookingController::class, 'checkDate'])->name('check.date');
 
 
 });

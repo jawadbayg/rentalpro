@@ -6,6 +6,19 @@
     .modal-content{
         margin-bottom: 35vh !important;
     }
+    .btn-next-step.disabled {
+    opacity: 0.5; /* Fades the button */
+    pointer-events: none; /* Prevents clicks */
+    cursor: not-allowed; /* Changes the cursor to indicate it's not clickable */
+    background-color: #cccccc; /* You can adjust this to match your design */
+    color: #666666; /* Change text color to show it's disabled */
+    border-color: #999999; /* Adjust border color for disabled state */
+  }
+
+  .btn-next-step {
+      transition: all 0.3s ease; /* Adds a smooth transition for changes */
+  }
+
 </style>
 <div class="container cards_container">
     <div class="row">
@@ -120,7 +133,7 @@
 
             <!-- To Date -->
             <div class="mb-3">
-              <label for="to_date" class="form-label">To Date<span class="text-danger">*</span></label>
+              <label for="to_date" class="form-label">To Date <span class="text-danger">*</span></label>
               <input type="text" id="to_date" name="to_date" class="form-control datepicker" required autocomplete="off">
               <div id="to_date_error" class="text-danger small mt-1"></div>
             </div>
@@ -148,7 +161,7 @@
 
             <!-- Replace the submit button with a trigger -->
             <div class="text-end">
-              <button type="button" class="btn-black-sm" onclick="openConfirmBookingModal()">Next Step</button>
+              <button type="button" class="btn-black-sm btn-next-step" onclick="openConfirmBookingModal()">Next Step</button>
             </div>
 
           </form>
@@ -251,6 +264,63 @@
             calculateTotal();
         }
     });
+</script>
+<script>
+    const fromDateInput = document.getElementById('from_date');
+    const toDateInput = document.getElementById('to_date');
+    const nextStepButton = document.querySelector('.btn-next-step');
+
+    fromDateInput.addEventListener('change', function () {
+        checkDateAvailability(this.value, 'from');
+    });
+
+    toDateInput.addEventListener('change', function () {
+        checkDateAvailability(this.value, 'to');
+    });
+
+    function checkDateAvailability(date, type) {
+        const payload = {
+            from_date: fromDateInput.value,
+            to_date: toDateInput.value
+        };
+
+        fetch('/check-date', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const errorDivId = type === 'from' ? 'from_date_error' : 'to_date_error';
+            const errorDiv = document.getElementById(errorDivId);
+
+            if (!data.available) {
+                errorDiv.textContent = data.message;
+            } else {
+                errorDiv.textContent = '';
+            }
+
+            toggleNextStepButton();
+        })
+        .catch(error => {
+            console.error('Error checking date availability:', error);
+        });
+    }
+
+    function toggleNextStepButton() {
+        const fromError = document.getElementById('from_date_error').textContent.trim();
+        const toError = document.getElementById('to_date_error').textContent.trim();
+        if (fromError || toError) {
+            nextStepButton.disabled = true;
+            nextStepButton.classList.add('disabled');
+        } else {
+            nextStepButton.disabled = false;
+            nextStepButton.classList.remove('disabled');
+        }
+    }
 </script>
 
 <script>
