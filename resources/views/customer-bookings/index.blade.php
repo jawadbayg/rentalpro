@@ -5,9 +5,16 @@
         @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))   
             <h2 class="mb-4">All Bookings</h2>
         @else
-            <h2 class="mb-4">My Bookings</h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>My Bookings</h2>
+                @if($invoice_to_be_paid == true)
+                    <a href="{{ route('invoices.index') }}" class="btn-black-sm ml-auto">Invoices to be paid</a>
+                @endif
+            </div>
         @endif
 
+
+           
             <table id="bookingsTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
@@ -233,7 +240,9 @@
         </style>
     @endif
 
-   
+<link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 
         <script>
             $(document).ready(function() {

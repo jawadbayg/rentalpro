@@ -11,15 +11,22 @@ class BookingConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $booking;
+    public $pdf;
 
-    public function __construct(Booking $booking)
+    public function __construct($booking, $pdf)
     {
         $this->booking = $booking;
+        $this->pdf = $pdf;
     }
+
 
     public function build()
     {
-        return $this->subject('Booking Confirmed')
-            ->view('emails.booking_confirmation');
+        return $this->subject('Booking Confirmation - Rental Pro')
+                    ->view('emails.booking_confirmation')
+                    ->attachData($this->pdf, 'invoice_' . $this->booking->booking_no . '.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
     }
+    
 }

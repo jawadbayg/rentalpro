@@ -97,6 +97,15 @@ body{
     text-align: center;
     margin-left: 24px;
 }
+.btn-download{
+    background-color: none !important;
+    padding-left: 20px;
+    color: rgb(1, 35, 46);
+    border-radius: 9px;
+    width: 50px;
+    height: 30px; 
+    text-align: center;
+}
 
 .datatable-btn{
     background-color:rgb(1, 35, 46);
@@ -344,4 +353,13 @@ input:-webkit-autofill {
     box-shadow: 0 0 0px 1000px white inset !important;
     -webkit-text-fill-color: #000 !important; /* optional: sets text color */
     transition: background-color 5000s ease-in-out 0s;
+}
+
+
+.invoice-index-container{
+    font-family: 'Poppins',sans-serif;
+    background-color: white;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 20px;
 }

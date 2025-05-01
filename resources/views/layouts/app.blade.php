@@ -135,11 +135,14 @@
         <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
 
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <button class="logo-btn">
-                        Rental Pro
-                    </button>
-                </a>
+                @if (Auth::guest() || !Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('FP'))
+                    <a class="navbar-brand" href="{{ url('/') }}">
+                        <button class="logo-btn">
+                            Rental Pro
+                        </button>
+                    </a>
+                @endif
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -225,8 +228,8 @@
                     <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
                     <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
                     <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
+                    <a href="{{ route('invoices.index') }}"><i class="fa fa-box"></i> Invoices</a>
                     <a href="{{ route('verification_requests.index') }}"><i class="fa fa-file"></i> Verification Requests</a>
-                    <a href=""><i class="fa fa-box"></i> Invoices</a>
                     </div>
                     @elseif (Auth::user()->hasRole('User'))
 
@@ -241,7 +244,7 @@
                         </div>
                         <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
                         <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
-                        <a href=""><i class="fa fa-box"></i> Invoices</a>
+                        <a href="{{ route('invoices.index') }}"><i class="fa fa-box"></i> Invoices</a>
                     </div>
                     @endif
                 @endif

@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Fleet;
+use App\Models\User;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth; 
 use App\Mail\BookingConfirmation;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use PhpParser\Node\Expr\FuncCall;
 class BookingController extends Controller
 {
     /**
@@ -40,18 +43,60 @@ class BookingController extends Controller
             'status' => 'pending', 
             'booking_no' => $randomNumber,
         ]);
-        $customer = \App\Models\User::find($validated['customer_id']);
-
-        if ($customer) {
-            Mail::to($customer->email)->send(new BookingConfirmation($booking));
-        }
+        $this->generateInvoice($booking);
 
         return response()->json(['success' => true, 'message' => 'Booking confirmed']);
     }
+
+    public function generateInvoice($booking)
+    {
+        $invoice = Invoice::create([
+            'booking_id' => $booking->id,
+            'booking_no' => $booking->booking_no,
+            'fp_id' => $booking->fp_id,
+            'fleet_id' => $booking->fleet_id,
+            'customer_id' => $booking->customer_id,
+            'payment_status' => $booking->payment_status,
+            'due_date' => now()->addDays(7)->toDateString(),
+        ]);
+        $pdf = Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
+        $customer = User::find($booking->customer_id);
+        if ($customer) {
+            Mail::to($customer->email)->send(new BookingConfirmation($booking, $pdf->output()));
+        }
+    }
+
+    public function invoiceIndex(){
+
+        $auth_id = Auth::user()->id;
+        
+        if(Auth::user()->hasRole('FP')){
+            $invoices = Invoice::with(['booking', 'customer', 'fp', 'fleet'])
+            ->where('fp_id',$auth_id)->get();
+        }
+        elseif(Auth::user()->hasRole('User')){
+            $invoices = Invoice::with(['booking', 'customer', 'fp', 'fleet'])
+            ->where('customer_id',$auth_id)->get();
+        }
+        else{
+            $invoices = Invoice::with(['booking', 'customer', 'fp', 'fleet'])->get(); //Admin
+        }
+
+        return view('invoices.index',compact('invoices'));
+    }
+
+    public function invoiceDownload($id)
+    {
+        $invoice = Invoice::with(['booking', 'customer', 'fp', 'fleet'])->findOrFail($id);
+        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
+        return $pdf->download('invoice_' . $invoice->booking_no . '.pdf');
+    }
+
     public function customer_index()
     {
         $fleet = '';
         $customer = '';
+        $invoice_to_be_paid = false;
         $auth_id = Auth::user()->id;
         if (Auth::user()->hasRole('Admin')) {
             $bookings = Booking::with('fleet')->get();
@@ -66,15 +111,23 @@ class BookingController extends Controller
             ->where('customer_id', $auth_id)
             ->whereNull('is_cancelled')
             ->get();
+            foreach ($bookings as $booking) {
+                $invoices = Invoice::where('booking_id', $booking->id)
+                ->where('customer_id',$auth_id)->get();
+                foreach ($invoices as $invoice) {
+                    if ($invoice->payment_status == 'pending') {
+                        $invoice_to_be_paid = true;
+                }
+            }
         }   
-
+    }
         foreach ($bookings as $booking) {
-            $customer = \App\Models\User::find($booking->customer_id);
-            $fp = \App\Models\User::find($booking->fp_id);
+            $customer = User::find($booking->customer_id);
+            $fp = User::find($booking->fp_id);
             $fleet = Fleet::find($booking->fleet_id);
         }
 
-        return view('customer-bookings.index', compact('bookings','fleet','customer'));
+        return view('customer-bookings.index', compact('bookings','fleet','customer','invoice_to_be_paid'));
     }
     public function cancel($id)
     {

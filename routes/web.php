@@ -10,7 +10,7 @@ use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\BookingController;
-
+use App\Http\Controllers\InvoiceController;
 
 Route::get('/', [LandingPageController::class, 'getFleet']);
 Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
@@ -42,11 +42,15 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/my-bookings', [BookingController::class, 'customer_index'])->name('customer.bookings.index');
     Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{id}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
+    Route::get('/invoices', [BookingController::class, 'invoiceIndex'])->name('invoices.index');
+    Route::get('/invoices/{id}/download', [BookingController::class, 'invoiceDownload'])->name('invoices.download');
 
 
 
 
 });
+
+
 
 
 Route::prefix('fleet')->name('fleet.')->group(function() {

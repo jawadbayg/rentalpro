@@ -21,7 +21,7 @@
     </div>
 @endsession
 
-<table class="table table-bordered">
+<table id="rolesTable" class="table table-bordered">
   <tr>
      <th width="100px">No</th>
      <th>Name</th>
@@ -50,4 +50,11 @@
     @endforeach
 </table>
 </div>
+
+
+<script>
+        $(document).ready(function() {
+            $('#rolesTable').DataTable();
+        });
+    </script>
 @endsection

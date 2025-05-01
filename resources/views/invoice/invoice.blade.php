@@ -52,8 +52,13 @@
     <div class="container">
         <div class="header">
             <div class="title">Rental Pro</div>
-            <div>INVOICE</div>
-            <span class="span"><strong>Created At:</strong> {{ $booking->created_at->format('Y-m-d') }}</span>
+
+            <div class="info-section">
+                <h2>Invoice</h2>
+                <p><strong>Booking ID:</strong> {{ $booking->booking_no }}</p>
+                <p><strong>Payment Status:</strong> {{ ucfirst($booking->payment_status) }}</p>
+                <p><strong>Issued On:</strong> {{ $booking->created_at->format('Y-m-d') }}</p>
+            </div>
         </div>
 
     
@@ -63,12 +68,13 @@
                     <h4>Customer Details</h4>
                     <p><strong>Name:</strong> {{ $customer->name }}</p>
                     <p><strong>Email:</strong> {{ $customer->email }}</p>
+                    <p><strong>Address:</strong> {{ $customer->address }}</p>
                 </td>
                 <td style="width: 50%; vertical-align: top;">
                     <h4>Fleet Provider Details</h4>
                     <p><strong>Provider:</strong> {{ $fp->name }}</p>
                     <p><strong>Vehicle:</strong> {{ $fleet->vehicle_name }}</p>
-                    <p><strong>Location:</strong> {{ $fleet->address }}</p>
+                    <p><strong>Address:</strong> {{ $fleet->address }}</p>
                 </td>
             </tr>
         </table>
@@ -81,7 +87,7 @@
                     <th>License Plate</th>
                     <th>From</th>
                     <th>To</th>
-                    <th>Total Price</th>
+                    <th>Total Amount</th>
                 </tr>
             </thead>
             <tbody>
