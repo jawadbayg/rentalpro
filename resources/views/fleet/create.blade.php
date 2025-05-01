@@ -144,8 +144,15 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn-black">Add Vehicle</button>
+        <button type="submit" class="btn-blue mt-2">Add Vehicle</button>
     </form>
+    <div class="mt-4">
+        <ul>
+        <li>The Rental Pro will retain 20% of the total amount earned from each booking as a service fee.</li>
+        <li>The commission percentage is applied to the total payment made by the customer for each booking.</li>
+        <li>This fee is deducted automatically before you receive the payment for the booking.</li>
+    </ul>
+    </div>
 </div>
 
 

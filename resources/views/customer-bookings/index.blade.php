@@ -196,11 +196,13 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{ $fleet->vehicle_no }}</td>
-                                    <td>{{ $fleet->vehicle_name }}</td>
-                                    <td>{{ $fleet->vehicle_type }}</td>
-                                    <td>{{ $fleet->license_plate }}</td>
-                                    <td>{{ $fleet->vehicle_owner_name }}</td>
+                                    @if ($fleet)
+                                        <td>{{ $fleet->vehicle_no }}</td>
+                                        <td>{{ $fleet->vehicle_name }}</td>
+                                        <td>{{ $fleet->vehicle_type }}</td>
+                                        <td>{{ $fleet->license_plate }}</td>
+                                        <td>{{ $fleet->vehicle_owner_name }}</td>
+                                    @endif
                                 </tr>
                             </tbody>
                         </table>
@@ -218,11 +220,13 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                @if ($fleet)
                                     <td>{{ $customer->name }}</td>
                                     <td>{{ $customer->email }}</td>
                                     <td>{{ $booking->from_date }}</td>
                                     <td>{{ $booking->to_date }}</td>
                                     <td>£{{ $booking->total_price }}</td>
+                                @endif
                                 </tr>
                             </tbody>
                         </table>
