@@ -56,17 +56,17 @@ class BookingController extends Controller
         if (Auth::user()->hasRole('Admin')) {
             $bookings = Booking::with('fleet')->get();
         }
-        if (Auth::user()->hasRole('FP')) {
+        elseif (Auth::user()->hasRole('FP')) {
             $bookings = Booking::with('fleet')
             ->where('fp_id',$auth_id)
             ->get();
-        }  else {
+        } else {
             $auth_id = Auth::id();
             $bookings = Booking::with('fleet')
-                ->where('customer_id', $auth_id)
-                ->whereNull('is_cancelled')
-                ->get();
-        }
+            ->where('customer_id', $auth_id)
+            ->whereNull('is_cancelled')
+            ->get();
+        }   
 
         foreach ($bookings as $booking) {
             $customer = \App\Models\User::find($booking->customer_id);

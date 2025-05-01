@@ -119,6 +119,7 @@
     object-position: center;
 }
 .form-container {
+    padding-top: 30px;
     background-color: white;
 }
 .logo-container {

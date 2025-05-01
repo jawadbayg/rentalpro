@@ -50,4 +50,12 @@ class Booking extends Model
     {
         return $this->belongsTo(Fleet::class, 'fleet_id');
     }
+    public function customer() {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+    
+    public function fp() {
+        return $this->belongsTo(User::class, 'fp_id');
+    }
+    
 }

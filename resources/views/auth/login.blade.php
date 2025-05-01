@@ -93,13 +93,14 @@
     object-position: center;
 }
 .form-container{
+    padding-top: 30px;
     background-color: white
 }
 .logo-container {
     top: 0;
     left: 0;
     right: 0;
-    padding: 20px 15px; /* responsive vertical/horizontal padding */
+    padding: 50px 15px; /* responsive vertical/horizontal padding */
     width: 100%;
     display: flex;
     flex-direction: column;
