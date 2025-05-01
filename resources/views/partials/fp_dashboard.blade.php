@@ -38,9 +38,9 @@
             <div class="col-md-6">
                 <div class="graph-card">
                     <h5>Revenue Total</h5>
-                        <div class="chart-div">
-                            <canvas id="" class="chart-smaller" height="120"></canvas>
-                        </div>
+                    <div class="chart-div" style="display: flex; align-items: center; justify-content: center; height: 300px;">
+                        <canvas id="revenueChartFP" style="max-height: 100%; max-width: 100%;"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,4 +156,37 @@
         const totalPaidAmount = {{ $totalPaidAmount ?? 0 }};
         renderPendingVsPaidChart(totalPendingAmount, totalPaidAmount);
     });
+</script>
+
+
+<script>
+    const ctx = document.getElementById('revenueChartFP').getContext('2d');
+
+    const revenueData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+            label: 'Revenue (£)',
+            data: @json($revenueByMonth),
+            fill: true,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            tension: 0.4
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: revenueData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    new Chart(ctx, config);
 </script>

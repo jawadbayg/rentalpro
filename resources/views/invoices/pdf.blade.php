@@ -82,8 +82,7 @@
                     <p><strong>Provider:</strong> {{ $invoice->fp->name }}</p>
                     <p><strong>Email:</strong> {{ $invoice->fp->email }}</p>
                     <p><strong>Vehicle:</strong> {{ $invoice->fleet->vehicle_name }}</p>
-                    <p><strong>Address:</strong> {{ $invoice->fp->address }}</p>
-                  
+                    <p><strong>Address:</strong> {{ $invoice->fp->address }}</p>        
                 </td>
             </tr>
         </table>
@@ -96,6 +95,13 @@
                 <th>From</th>
                 <th>To</th>
                 <th>Total Amount</th>
+                @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
+                    <th>Fee %</th>
+                    <th>Final Amount</th>
+                @endif
+                @if(Auth::user()->hasRole('Admin'))
+                    <th>Rental Pro Amount</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -106,6 +112,13 @@
                 <td>{{ $invoice->booking->from_date }}</td>
                 <td>{{ $invoice->booking->to_date }}</td>
                 <td>£{{ $invoice->booking->total_price }}</td>
+                @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
+                    <td>20</td>
+                    <td>£{{ number_format($invoice->booking->total_price * 0.80, 2) }}</td>
+                @endif
+                @if(Auth::user()->hasRole('Admin'))
+                    <td>£{{ number_format($invoice->booking->total_price * 0.20, 2) }}</td>
+                @endif
             </tr>
         </tbody>
     </table> 

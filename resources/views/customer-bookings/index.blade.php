@@ -22,7 +22,14 @@
                         <th>Vehicle</th>
                         <th>From Date</th>
                         <th>To Date</th>
-                        <th>Total Price</th>
+                        <th>Booking Amount</th>
+                        @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
+                            <th>Fee %</th>
+                            <th>Final Amount</th>
+                        @endif
+                        @if(Auth::user()->hasRole('Admin'))
+                            <th>Rental Pro Amount</th>
+                        @endif
                         <th>Status</th>
                         <th>Payment Status</th>
                         <th>Actions</th>
@@ -41,6 +48,13 @@
                                 <td>{{ $booking->from_date }}</td>
                                 <td>{{ $booking->to_date }}</td>
                                 <td>£{{ $booking->total_price }}</td>
+                                @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
+                                    <td>20</td>
+                                    <td>£{{ number_format($booking->total_price * 0.80, 2) }}</td>
+                                @endif
+                                @if(Auth::user()->hasRole('Admin'))
+                                    <td>£{{ number_format($booking->total_price * 0.20, 2) }}</td>
+                                @endif
                                 <td class="{{ $booking->status == 'cancelled' ? 'text-danger' : '' }}">
                                     {{ $booking->status }}
                                 </td>

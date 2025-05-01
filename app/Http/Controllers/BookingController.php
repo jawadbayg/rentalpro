@@ -31,6 +31,10 @@ class BookingController extends Controller
         do {
             $randomNumber = 'RP' . str_pad(rand(1, 999999999), 9, '0', STR_PAD_LEFT);
         } while (Booking::where('booking_no', $randomNumber)->exists());
+        
+        $feeAmount = round($validated['total_price'] * 0.20);
+
+        $fpAmount = round($validated['total_price'] * 0.80);
 
         $booking = Booking::create([
             'fp_id' => $validated['fp_id'],
@@ -42,6 +46,8 @@ class BookingController extends Controller
             'payment_status' => $validated['payment_status'],
             'status' => 'pending', 
             'booking_no' => $randomNumber,
+            'fee_amount' => $feeAmount,
+            'fp_amount' => $fpAmount,
         ]);
         $this->generateInvoice($booking);
 

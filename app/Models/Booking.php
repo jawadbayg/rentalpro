@@ -19,6 +19,8 @@ class Booking extends Model
         'payment_status',
         'total_price',
         'booking_no',
+        'fee_amount',
+        'fp_amount',
     ];
 
     // Cast dates to Carbon instances

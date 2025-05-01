@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice</title>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; }
+        body { font-family: sans-serif; margin: 0; padding: 0; font-size: 14px;}
        
         p{
             font-size: 14px;
@@ -88,6 +88,13 @@
                     <th>From</th>
                     <th>To</th>
                     <th>Total Amount</th>
+                    @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
+                            <th>Fee %</th>
+                            <th>Final Amount</th>
+                    @endif
+                    @if(Auth::user()->hasRole('Admin'))
+                        <th>Rental Pro Amount</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -98,6 +105,13 @@
                     <td>{{ $booking->from_date }}</td>
                     <td>{{ $booking->to_date }}</td>
                     <td>£{{ $booking->total_price }}</td>
+                    @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
+                        <td>20</td>
+                        <td>£{{ number_format($booking->total_price * 0.80, 2) }}</td>
+                    @endif
+                    @if(Auth::user()->hasRole('Admin'))
+                        <td>£{{ number_format($booking->total_price * 0.20, 2) }}</td>
+                    @endif
                 </tr>
             </tbody>
         </table>

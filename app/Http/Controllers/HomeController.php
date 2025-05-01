@@ -9,6 +9,9 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Models\Fleet;
 use App\Models\UserValidation;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 class HomeController extends Controller
 {
     /**
@@ -46,8 +49,18 @@ class HomeController extends Controller
             $totalPaidAmount = Booking::whereIn('id', $paidBookingIds)->sum('total_price');
             //user verification requests count
             $verification_requests = UserValidation::where('status','pending')->count();
+            $monthlyRevenue = Booking::selectRaw('MONTH(created_at) as month, SUM(fee_amount) as total')
+            ->whereNull('is_cancelled')
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
 
-            return view('home', compact('totalUsers', 'totalCustomers','totalFleetProviders','totalFleets','ToBePaidInvoices','totalBookings', 'totalInvoices','totalPendingAmount','totalPaidAmount','verification_requests'));
+            $revenueByMonth = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $revenueByMonth[] = isset($monthlyRevenue[$i]) ? (int) $monthlyRevenue[$i] : 0;
+            }
+            return view('home', compact('totalUsers', 'totalCustomers','totalFleetProviders','totalFleets','ToBePaidInvoices','totalBookings', 'totalInvoices','totalPendingAmount','totalPaidAmount','verification_requests','revenueByMonth'));
         }
 
         elseif (Auth::user()->hasRole('FP')) {
@@ -85,7 +98,21 @@ class HomeController extends Controller
             $totalPaidAmount = Booking::whereIn('id', $paidBookingIds)
             ->sum('total_price');
 
-            return view('home', compact('totalFleets','ToBePaidInvoices','totalBookings', 'totalInvoices','totalPendingAmount','totalPaidAmount'));
+
+            $monthlyRevenue = Booking::selectRaw('MONTH(created_at) as month, SUM(fp_amount) as total')
+            ->where('fp_id',Auth::user()->id)
+            ->whereNull('is_cancelled')
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
+
+            $revenueByMonth = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $revenueByMonth[] = isset($monthlyRevenue[$i]) ? (int) $monthlyRevenue[$i] : 0;
+            }
+
+            return view('home', compact('totalFleets','ToBePaidInvoices','totalBookings', 'totalInvoices','totalPendingAmount','totalPaidAmount','revenueByMonth'));
         }
         return view('home');
     }
