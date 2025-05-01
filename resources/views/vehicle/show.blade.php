@@ -22,7 +22,7 @@
                 @endif
                     <p><strong>{{ $fleet->user->name }}</strong></p>
                     <p><strong>Email:</strong> {{ $fleet->user->email }}</p>
-                    <p><strong>Address:</strong>{{ $fleet->address }}</p>
+                    <p><strong>Address:</strong>{{ $fleet->user->fpDetail->address }}</p>
                     <button class="btn-outline"> Contact</button>
                     @if ($already_booked == true)
                     <button class="btn-disabled mt-3 disabled" aria-disabled="true" style="pointer-events: none;">

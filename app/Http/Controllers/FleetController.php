@@ -49,6 +49,7 @@ class FleetController extends Controller
                 'fuel_type' => ['nullable', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
                 'images' => ['nullable', 'array'],
                 'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+                'charges_per_day' => ['required']
             ], [
                 'vehicle_no.required' => 'Vehicle number is required.',
                 'vehicle_no.regex' => 'Vehicle number must be numeric and at least 4 digits.',
@@ -70,6 +71,8 @@ class FleetController extends Controller
                 'manufacturing_year.required' => 'Manufacturing year is required.',
                 'manufacturing_year.min' => 'Manufacturing year cannot be before 1900.',
                 'manufacturing_year.max' => 'Manufacturing year cannot be in the future.',
+
+                'charges_per_day.required' => 'Charges per day is required', 
 
                 'status.required' => 'Vehicle status is required.',
                 'status.in' => 'Invalid status selected.',
@@ -94,6 +97,7 @@ class FleetController extends Controller
         $fleet->status = $request->status;
         $fleet->mileage = $request->mileage;
         $fleet->fuel_type = $request->fuel_type;
+        $fleet->price_per_day = $request->charges_per_day;
         $fleet->rental_status = 'Available';
         $fleet->save();
 

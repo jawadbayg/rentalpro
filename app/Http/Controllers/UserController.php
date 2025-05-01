@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\CustomerDetail;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
@@ -178,54 +179,63 @@ class UserController extends Controller
         return view('partials.user_validation');
     }
     public function userValidationStore(Request $request)
-{
-    $request->validate([
-        'identity_number' => [
-            'required',
-            'numeric',
-            'digits_between:6,20', // optional: limit length
-            'regex:/^[0-9]+$/'
-        ],
-        'license_number' => [
-            'required',
-            'regex:/^[A-Z0-9\-]{5,20}$/i' // e.g. "DL-12345", case-insensitive
-        ],
-        'license_provider' => [
-            'required',
-            'regex:/^[A-Za-z\s]+$/', // only letters and spaces
-            'max:255'
-        ],
-        'age' => [
-            'required',
-            'numeric',
-            'min:18',
-            'max:100',
-            'regex:/^[0-9]{2,3}$/'
-        ],
-        'address' => [
-            'required',
-            'regex:/^[A-Za-z0-9\s,\-\.]{5,500}$/', // basic characters
-            'max:500'
-        ],
-    ], [
-        // Custom error messages (optional)
-        'identity_number.regex' => 'Identity number must contain only digits.',
-        'license_number.regex' => 'License number must be alphanumeric and 5–20 characters.',
-        'license_provider.regex' => 'License provider must contain only letters.',
-        'age.regex' => 'Age must be a valid number.',
-        'address.regex' => 'Address format is invalid.',
-    ]);
+    {
+        $request->validate([
+            'identity_number' => [
+                'required',
+                'numeric',
+                'digits_between:6,20', // optional: limit length
+                'regex:/^[0-9]+$/'
+            ],
+            'license_number' => [
+                'required',
+                'regex:/^[A-Z0-9\-]{5,20}$/i' // e.g. "DL-12345", case-insensitive
+            ],
+            'license_provider' => [
+                'required',
+                'regex:/^[A-Za-z\s]+$/', // only letters and spaces
+                'max:255'
+            ],
+            'age' => [
+                'required',
+                'numeric',
+                'min:18',
+                'max:100',
+                'regex:/^[0-9]{2,3}$/'
+            ],
+            'address' => [
+                'required',
+                'regex:/^[A-Za-z0-9\s,\-\.]{5,500}$/', // basic characters
+                'max:500'
+            ],
+        ], [
+            // Custom error messages (optional)
+            'identity_number.regex' => 'Identity number must contain only digits.',
+            'license_number.regex' => 'License number must be alphanumeric and 5–20 characters.',
+            'license_provider.regex' => 'License provider must contain only letters.',
+            'age.regex' => 'Age must be a valid number.',
+            'address.regex' => 'Address format is invalid.',
+        ]);
 
-    UserValidation::create([
-        'user_id' => Auth::id(),
-        'identity_number' => $request->identity_number,
-        'license_number' => $request->license_number,
-        'license_provider' => $request->license_provider,
-        'age' => $request->age,
-        'address' => $request->address,
-    ]);
+        $userValidation = UserValidation::create([
+            'user_id' => Auth::id(),
+            'identity_number' => $request->identity_number,
+            'license_number' => $request->license_number,
+            'license_provider' => $request->license_provider,
+            'age' => $request->age,
+            'address' => $request->address,
+        ]);
+        $this->customerAddressStore($userValidation->id, $request->address);
 
-    return redirect()->back()->with('success', 'Validation information submitted successfully.');
-}
+        return redirect()->back()->with('success', 'Validation information submitted successfully.');
+    }
 
+    public function customerAddressStore($userValidationId, $address)
+    {
+        CustomerDetail::create([
+            'user_id' => Auth::id(),
+            'user_validation_id' => $userValidationId,
+            'address' => $address,
+        ]);
+    }
 }

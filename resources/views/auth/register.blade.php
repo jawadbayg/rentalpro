@@ -78,17 +78,39 @@
                             </span>
                         @enderror
                     </div>
+                   
+                    <!-- Address Field (Initially Hidden) -->
+                    <div class="mb-3" id="address-field" style="display: none;">
+                        <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                        <input id="address" type="text"
+                            class="form-control form-control-lg custom-input @error('address') is-invalid @enderror"
+                            name="address" value="{{ old('address') }}" autocomplete="address">
+                        @error('address')
+                            <span class="text-danger" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
 
                     <!-- Role Selection -->
                     <div class="mb-3">
                         <label class="form-label">Register As <span class="text-danger">*</span></label>
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="role_fp" name="role" value="FP" checked>
-                            <label class="form-check-label" for="role_fp">Fleet Provider</label>
-                        </div>
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="role_user" name="role" value="User">
-                            <label class="form-check-label" for="role_user">Customer</label>
+                        <div class="row">
+                            <div class="col-6">
+                            <div class="form-check col">
+                                <input type="radio" class="form-check-input" id="role_user" name="role" value="User"
+                                    {{ old('role') == 'User' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role_user">Customer</label>
+                            </div>
+                            </div>
+                            <div class="col-6">
+                            <div class="form-check col">
+                                <input type="radio" class="form-check-input" id="role_fp" name="role" value="FP"
+                                    {{ old('role') == 'FP' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role_fp">Fleet Provider</label>
+                            </div>
+                            </div>
                         </div>
                         @error('role')
                             <span class="text-danger" role="alert">
@@ -152,4 +174,27 @@
     text-decoration: underline;
 }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const roleFP = document.getElementById('role_fp');
+        const roleUser = document.getElementById('role_user');
+        const addressField = document.getElementById('address-field');
+
+        function toggleAddressField() {
+            if (roleFP.checked) {
+                addressField.style.display = 'block';
+            } else {
+                addressField.style.display = 'none';
+            }
+        }
+
+        roleFP.addEventListener('change', toggleAddressField);
+        roleUser.addEventListener('change', toggleAddressField);
+        toggleAddressField();
+    });
+</script>
+
+
+
 @endsection

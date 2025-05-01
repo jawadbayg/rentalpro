@@ -127,6 +127,15 @@
             @enderror
         </div>
 
+        <div class="mb-3">
+            <label for="charges_per_day" class="form-label">Charges per day <span class="text-danger">*</span></label>
+            <input type="number" class="form-control @error('charges_per_day') is-invalid @enderror" 
+                   id="charges_per_day" name="charges_per_day" value="{{ old('charges_per_day') }}">
+            @error('charges_per_day')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+
         <div class="form-group mb-3">
             <label for="images">Vehicle Images (optional)</label>
             <input type="file" name="images[]" class="form-control @error('images.*') is-invalid @enderror" multiple>

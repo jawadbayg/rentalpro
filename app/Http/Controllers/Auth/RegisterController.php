@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\FpDetail;  
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -43,11 +44,13 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'regex:/^[\w\._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/'],  // Email format
             'password' => ['required', 'string', 'min:8', 'confirmed'],  // Password should be at least 8 characters
             'role' => ['required', 'in:FP,User'],  // Validate role
+            'address' => 'required_if:role,FP|max:255',
         ], [
             'name.regex' => 'Name should only contain letters and spaces.',
             'email.regex' => 'Please enter a valid email address.',
             'password.min' => 'Password must be at least 8 characters.',
             'role.required' => 'Please select a role.',
+            'address.required_if' => 'The address field is required.',
         ]);
     }
 
@@ -69,6 +72,11 @@ class RegisterController extends Controller
         // Assign role based on the selected option
         if ($data['role'] == 'FP') {
             $user->assignRole('FP');  // Assuming you have 'FP' role created
+            FpDetail::create([
+
+                'user_id' => $user->id,  
+                'address' => $data['address'], 
+            ]);
         } else {
             $user->assignRole('User');  // Default to 'User' role
         }

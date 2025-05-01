@@ -48,5 +48,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
+    public function fpDetail()
+    {
+        return $this->hasOne(FpDetail::class); 
+    }
 
+    public function customerDetails()
+    {
+        return $this->hasMany(CustomerDetail::class);
+    }
 }
