@@ -23,6 +23,10 @@ class Fleet extends Model
         'fuel_type',
         'rental_status',
         'images',
+        'no_of_seats',
+        'no_of_doors',
+        'no_of_bags',
+        'color',
     ];
     public function user()
     {

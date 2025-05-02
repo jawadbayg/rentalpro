@@ -99,6 +99,10 @@ class FleetController extends Controller
         $fleet->fuel_type = $request->fuel_type;
         $fleet->price_per_day = $request->charges_per_day;
         $fleet->rental_status = 'Available';
+        // $fleet->no_of_seats = $request->no_of_seats;
+        // $fleet->no_of_doors = $request->no_of_doors;
+        // $fleet->no_of_bags = $request->no_of_bags;
+        // $fleet->color = $request->color;
         $fleet->save();
 
         if ($request->has('images')) {
