@@ -12,6 +12,7 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\InvoiceController;
 use Illuminate\Http\Request;
+use App\Models\Booking;
 
 Route::get('/', [LandingPageController::class, 'getFleet']);
 Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
@@ -63,16 +64,6 @@ Route::prefix('fleet')->name('fleet.')->group(function() {
     // Route::get('/{id}', [FleetController::class, 'show'])->name('show');
 });
 
-Route::get('login',function(){
-    $email = 'user@user.com';
-    $password = 'password';
-
-    if(Auth::attempt(['email'=>$email, 'password'=>$password])){
-        return redirect('/abc');
-    }
-    dd('NOT LOGIN');
-});
-
 // Route::get('/checkout', function (Request $request) {
 
 //     $user = auth()->user();
@@ -87,13 +78,21 @@ Route::get('login',function(){
 //     ]);
 // })->name('checkout');
 
-Route::get('checkout',function(){
-    $amount = 50 * 100;
-    $intent = auth()->user()->pay(
-       $amount
-    );
-    return view('stripe.checkout',compact('intent'));
-});
+Route::get('checkout/{booking_id}', function ($booking_id) {
+    $user = Auth::user();
+    
+    $booking = Booking::where('id', $booking_id)
+                      ->where('customer_id', $user->id)
+                      ->where('is_cancelled',null)
+                      ->firstOrFail();
+
+
+    $amount = $booking->total_price * 100;
+
+    $intent = $user->pay($amount);
+
+    return view('stripe.checkout', compact('intent', 'booking'));
+})->name('checkout');
  
 Route::get('/checkout/success',  function(){
     return 'Success Page';
@@ -101,3 +100,5 @@ Route::get('/checkout/success',  function(){
 Route::get('/checkout/cancel', function(){
     return 'Cancel Page';
 })->name('checkout-cancel');
+
+Route::post('/payment-success/{booking_id}', [BookingController::class, 'paymentSuccessChanges'])->name('payment.success');

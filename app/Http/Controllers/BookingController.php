@@ -225,6 +225,14 @@ class BookingController extends Controller
             'message' => 'Vehicle is available on this date.'
         ]);
     }
-
+    public function paymentSuccessChanges($booking_id)
+    {
+        $booking = Booking::where('id',$booking_id)->first();
+        if ($booking) {
+            $booking->payment_status = 'paid';
+            $booking->save();
+        }
+        return response()->json(['message' => 'Payment status updated to paid.']);
+    }
         
     }

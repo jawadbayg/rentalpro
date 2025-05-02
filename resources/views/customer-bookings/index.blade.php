@@ -76,6 +76,11 @@
                                             Cancel
                                         </a>
                                     @endif
+
+                                    
+                                    @if(Auth::user()->hasRole('User') && $booking->payment_status != 'paid')
+                                        <a href="{{ route('checkout', $booking->id) }}" class="btn-blue-sm">Pay Now</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
