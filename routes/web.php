@@ -11,6 +11,7 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\InvoiceController;
+use Illuminate\Http\Request;
 
 Route::get('/', [LandingPageController::class, 'getFleet']);
 Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
@@ -62,3 +63,33 @@ Route::prefix('fleet')->name('fleet.')->group(function() {
     // Route::get('/{id}', [FleetController::class, 'show'])->name('show');
 });
 
+Route::get('login',function(){
+    $email = 'user@user.com';
+    $password = 'password';
+
+    if(Auth::attempt(['email'=>$email, 'password'=>$password])){
+        return redirect('/abc');
+    }
+    dd('NOT LOGIN');
+});
+
+Route::get('/checkout', function (Request $request) {
+
+    $user = auth()->user();
+
+    $stripePriceId = 'price_1RKCcZ4gfmenhky10ANUU7Y1';
+ 
+    $quantity = 1;
+ 
+    return $user->checkout([$stripePriceId => $quantity], [
+        'success_url' => route('checkout-success'),
+        'cancel_url' => route('checkout-cancel'),
+    ]);
+})->name('checkout');
+ 
+Route::get('/checkout/success',  function(){
+    return 'Success Page';
+})->name('checkout-success');
+Route::get('/checkout/cancel', function(){
+    return 'Cancel Page';
+})->name('checkout-cancel');

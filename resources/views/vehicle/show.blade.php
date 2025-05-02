@@ -12,7 +12,6 @@
     cursor: not-allowed; /* Changes the cursor to indicate it's not clickable */
     background-color: #cccccc; /* You can adjust this to match your design */
     color: #666666; /* Change text color to show it's disabled */
-    border-color: #999999; /* Adjust border color for disabled state */
   }
 
   .btn-next-step {
