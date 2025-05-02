@@ -73,19 +73,27 @@ Route::get('login',function(){
     dd('NOT LOGIN');
 });
 
-Route::get('/checkout', function (Request $request) {
+// Route::get('/checkout', function (Request $request) {
 
-    $user = auth()->user();
+//     $user = auth()->user();
 
-    $stripePriceId = 'price_1RKCcZ4gfmenhky10ANUU7Y1';
+//     $stripePriceId = 'price_1RKCcZ4gfmenhky10ANUU7Y1';
  
-    $quantity = 1;
+//     $quantity = 1;
  
-    return $user->checkout([$stripePriceId => $quantity], [
-        'success_url' => route('checkout-success'),
-        'cancel_url' => route('checkout-cancel'),
-    ]);
-})->name('checkout');
+//     return $user->checkout([$stripePriceId => $quantity], [
+//         'success_url' => route('checkout-success'),
+//         'cancel_url' => route('checkout-cancel'),
+//     ]);
+// })->name('checkout');
+
+Route::get('checkout',function(){
+    $amount = 50 * 100;
+    $intent = auth()->user()->pay(
+       $amount
+    );
+    return view('stripe.checkout',compact('intent'));
+});
  
 Route::get('/checkout/success',  function(){
     return 'Success Page';
