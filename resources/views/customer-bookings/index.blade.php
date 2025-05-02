@@ -61,25 +61,23 @@
                                 <td>{{ $booking->payment_status }}</td>
                                 <td>
                                     @if(Auth::user()->hasRole('Admin')) 
-                                        <a href="#" class="btn-black-sm" data-bs-toggle="modal" data-bs-target="#adminViewModal" data-booking-id="{{ $booking->id }}">View</a>
+                                        <a href="#" class="btn-download" data-bs-toggle="modal" data-bs-target="#adminViewModal" data-booking-id="{{ $booking->id }}"><i class="fas fa-eye"></i></a>
                                     @elseif(Auth::user()->hasRole('FP')) 
-                                    <a href="#" class="btn-black-sm" data-bs-toggle="modal" data-bs-target="#FPViewModal" data-booking-id="{{ $booking->id }}">View</a>
+                                    <a href="#" class="btn-download" data-bs-toggle="modal" data-bs-target="#FPViewModal" data-booking-id="{{ $booking->id }}"><i class="fas fa-eye"></i></a>
                                         @else
-                                        <a href="{{ route('vehicle.show', $booking->fleet->id) }}" class="btn-black-sm">View</a>
+                                        <a href="{{ route('vehicle.show', $booking->fleet->id) }}" class="btn-download" title="View"><i class="fas fa-eye" style='font-size:20px'></i></a>
                                     @endif
                                     
-                                    <a href="{{ route('bookings.invoice', $booking->id) }}" target="_blank" class="btn-black-sm">Invoice</a>
+                                    <a href="{{ route('bookings.invoice', $booking->id) }}" target="_blank" class="btn-download" title="View Invoice"><i class='fas fa-file-alt' style='font-size:20px'></i></i></a>
                                     
                                     @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))
                                     @else
-                                        <a href="#" class="btn-black-sm" data-bs-toggle="modal" data-bs-target="#cancelModal" data-booking-id="{{ $booking->id }}">
-                                            Cancel
+                                        <a href="#" class="btn-download" data-bs-toggle="modal" data-bs-target="#cancelModal" data-booking-id="{{ $booking->id }}" title="Cancel Booking">
+                                        <i class='fas fa-times-circle' style='font-size:20px'></i>
                                         </a>
                                     @endif
-
-                                    
                                     @if(Auth::user()->hasRole('User') && $booking->payment_status != 'paid')
-                                        <a href="{{ route('checkout', $booking->id) }}" class="btn-blue-sm">Pay Now</a>
+                                        <a href="{{ route('checkout', $booking->id) }}" class="btn-pay-now">Pay Now</a>
                                     @endif
                                 </td>
                             </tr>

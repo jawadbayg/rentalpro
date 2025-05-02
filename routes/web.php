@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::post('/check-date', [BookingController::class, 'checkDate'])->name('check.date');
 
+    Route::get('/payments', [BookingController::class, 'paymentHistoryIndex'])->name('payments.index');
 
 });
 

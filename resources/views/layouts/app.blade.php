@@ -229,6 +229,7 @@
                     <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
                     <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
                     <a href="{{ route('invoices.index') }}"><i class="fa fa-box"></i> Invoices</a>
+                    <a href="{{ route('payments.index') }}"><i class="fa fa-box"></i> Payments</a>
                     <a href="{{ route('verification_requests.index') }}"><i class="fa fa-file"></i> Verification Requests</a>
                     </div>
                     @elseif (Auth::user()->hasRole('User'))
@@ -245,6 +246,7 @@
                         <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
                         <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
                         <a href="{{ route('invoices.index') }}"><i class="fa fa-box"></i> Invoices</a>
+                        <a href="{{ route('payments.index') }}"><i class="fa fa-box"></i> Payments</a>
                     </div>
                     @endif
                 @endif

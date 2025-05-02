@@ -118,7 +118,18 @@ body{
     display: inline-block; 
     text-align: center;
 }
-
+.btn-pay-now{
+    margin-left: 16px;
+    background-color: rgb(1, 35, 46);
+    padding: 7px;
+    color: white;
+    border-radius: 9px;
+    width: auto; 
+    min-width: 90px; 
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center; 
+}
 #section1Carousal {
     font-family: 'Poppins',sans-serif;
     height: 500px !important;
@@ -365,7 +376,8 @@ input:-webkit-autofill {
 }
 
 .checkout-container{
-    margin-top: 100px;
+    font-family: 'Poppins',sans-serif;
+    margin-top: 90px;
     background-color: white;
     border-radius: 20px;
     padding: 30px;

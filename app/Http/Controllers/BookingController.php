@@ -12,6 +12,7 @@ use App\Mail\BookingConfirmation;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use PhpParser\Node\Expr\FuncCall;
+use App\Models\PaymentHistory;
 class BookingController extends Controller
 {
     /**
@@ -232,7 +233,34 @@ class BookingController extends Controller
             $booking->payment_status = 'paid';
             $booking->save();
         }
+        $invoice = Invoice::where('booking_id',$booking_id)->first();
+        if($invoice){
+            $invoice->payment_status = 'paid';
+            $invoice->save();
+        }
+        $this->paymentHistoryStore($booking, $invoice);
         return response()->json(['message' => 'Payment status updated to paid.']);
     }
+    public function paymentHistoryStore($booking, $invoice)
+    {
+        if ($booking && $invoice) {
+            PaymentHistory::create([
+                'booking_id'   => $booking->id,
+                'invoice_id'   => $invoice->id,
+                'customer_id'  => $booking->customer_id,     
+                'fp_id'        => $booking->fp_id,      
+                'total_price'  => $booking->total_price,
+            ]);
+        }
+    }
         
+    public function paymentHistoryIndex(){
+        if(Auth::user()->hasRole('Admin')){
+            $payments = PaymentHistory::all();
+        }
+        if(Auth::user()->hasRole('FP')){
+            $payments = PaymentHistory::where('fp_id',Auth::user()->id)->get();
+        }
+        return view('payments.index',compact('payments'));
+    }
     }

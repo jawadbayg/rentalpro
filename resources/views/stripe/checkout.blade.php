@@ -3,6 +3,15 @@
 @section('content')
 <div class="d-flex justify-content-center align-items-center ">
     <div class="checkout-container col-5">
+    <div class="checkout-info mb-4">
+            <h4>Booking Information</h4>
+            <ul>
+                <li><strong>Booking ID:</strong> {{ $booking->booking_no }}</li>
+                <li><strong>Fleet Provider:</strong> {{ $booking->fp->name }}</li>
+                <li><strong>Booking Date:</strong> {{ $booking->created_at->format('M d, Y') }}</li>
+                <li><strong>Total Price:</strong> ${{ number_format($booking->total_price, 2) }}</li>
+            </ul>
+        </div>
         <form id="payment-form" method="POST">
             <input id="card-holder-name" type="text" class="form-control" placeholder="Card Holder Name" required><br>
 
@@ -46,9 +55,7 @@
             if (error) {
                 document.getElementById('card-errors').textContent = error.message;
             } else if (paymentIntent.status === 'succeeded') {
-                const bookingId = window.location.pathname.split('/').pop(); // Extract ID from URL
-
-                // AJAX call to backend
+                const bookingId = window.location.pathname.split('/').pop(); 
                 fetch(`/payment-success/${bookingId}`, {
                     method: 'POST',
                     headers: {
