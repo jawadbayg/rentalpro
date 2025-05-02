@@ -238,4 +238,8 @@ class UserController extends Controller
             'address' => $address,
         ]);
     }
+
+    public function about_us_index(){
+        return view('partials.about_us');
+    }
 }

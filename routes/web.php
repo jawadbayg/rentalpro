@@ -53,7 +53,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 });
 
-
+    Route::get('about-us',[UserController::Class,'about_us_index'])->name('about.us.index');
 
 
 Route::prefix('fleet')->name('fleet.')->group(function() {

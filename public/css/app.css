@@ -142,18 +142,18 @@ body{
 
 .carousel-caption {
     position: absolute;
-    bottom: 300px;
-    left: 50px;
-    right: 20px;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
     color: rgb(255, 255, 255);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     padding: 10px;
-    width: 100%; 
+    width: auto;  /* Allow the width to adjust based on the content */
     text-align: center;
     font-size: 30px;
 }
 
-.carousel-caption h3, .carousel-caption p {
+.carousel-caption h1, .carousel-caption p {
     margin: 0;
 }
 
@@ -389,3 +389,28 @@ input:-webkit-autofill {
     color: rgb(1, 35, 46);
     text-decoration: none;
 }
+
+.ml4 {
+    position: relative;
+    top: -120px;
+    font-weight: 900;
+    font-size: 3.5em;
+  }
+  .ml4 .letters {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    opacity: 0; 
+  }
+
+  .footer{
+    font-family: 'Poppins',sans-serif;
+    background-color: rgb(1, 35, 46);
+  }
+
+  .about-text-column{
+    font-family: 'Poppins',sans-serif;
+    background-color: white;
+    padding: 30px;
+  }

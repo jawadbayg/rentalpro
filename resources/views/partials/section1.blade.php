@@ -8,9 +8,13 @@
     </div>
     <!-- Static caption for all images -->
     <div class="carousel-caption">
-        <h1>We Provide Best service</h1>
-        <p>Description or any text you want to display on all images</p>
-    </div>
+            <h1 class="ml4">
+                <span class="letters letters-1">Book</span>
+                <span class="letters letters-2">Drive</span>
+                <span class="letters letters-3">Enjoy!</span>
+            </h1>
+            <P class="mt-4"> Your perfect car is just one booking away – reserve your vehicle now and enjoy a smooth ride!</P>
+        </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#section1Carousal" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
