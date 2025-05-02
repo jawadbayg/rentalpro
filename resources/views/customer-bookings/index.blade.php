@@ -72,9 +72,11 @@
                                     
                                     @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))
                                     @else
-                                        <a href="#" class="btn-download" data-bs-toggle="modal" data-bs-target="#cancelModal" data-booking-id="{{ $booking->id }}" title="Cancel Booking">
-                                        <i class='fas fa-times-circle' style='font-size:20px'></i>
-                                        </a>
+                                        @if ($booking->payment_status != 'paid')
+                                            <a href="#" class="btn-download" data-bs-toggle="modal" data-bs-target="#cancelModal" data-booking-id="{{ $booking->id }}" title="Cancel Booking">
+                                                <i class='fas fa-times-circle' style='font-size:20px'></i>
+                                            </a>
+                                        @endif
                                     @endif
                                     @if(Auth::user()->hasRole('User') && $booking->payment_status != 'paid')
                                         <a href="{{ route('checkout', $booking->id) }}" class="btn-pay-now">Pay Now</a>

@@ -148,6 +148,11 @@ class BookingController extends Controller
         $booking->status = 'cancelled';
         $booking->save();
 
+        $invoice = Invoice::where('booking_id',$id)->first();
+        if($invoice){
+            $invoice->delete();
+        }
+
         return response()->json(['message' => 'Booking cancelled successfully.']);
     }
     

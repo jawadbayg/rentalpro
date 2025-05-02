@@ -63,6 +63,10 @@ Route::prefix('fleet')->name('fleet.')->group(function() {
     Route::get('/{id}/edit', [FleetController::class, 'edit'])->name('edit');
     Route::put('/{id}', [FleetController::class, 'update'])->name('update');
     // Route::get('/{id}', [FleetController::class, 'show'])->name('show');
+    Route::post('/delete/{id}', [FleetController::class, 'destroy'])->name('delete');
+
+
+
 });
 
 // Route::get('/checkout', function (Request $request) {

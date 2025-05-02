@@ -182,6 +182,14 @@ public function update(Request $request, $id)
     return redirect()->route('fleet.index')->with('success', 'Vehicle updated successfully!');
 }
 
+    public function destroy($id)
+    {
+        $fleet = Fleet::findOrFail($id);
+        $fleet->delete();
+
+        return response()->json(['message' => 'Fleet deleted successfully.']);
+    }
+
 
     
 }

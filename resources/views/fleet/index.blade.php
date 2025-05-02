@@ -63,11 +63,15 @@
                             <td>{{ $fleet->rental_status }}</td>
                             <td>
                             <a href="{{ route('fleet.edit', $fleet->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
+                            <button 
+    class="btn btn-danger btn-sm delete-fleet-btn" 
+    data-id="{{ $fleet->id }}" 
+    data-token="{{ csrf_token() }}">
+    Delete
+</button>
+
+
+
                             </td>
                         </tr>
                     @endforeach
@@ -83,5 +87,52 @@
         $('#fleetTable').DataTable(); 
     });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.delete-fleet-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const fleetId = this.dataset.id;
+            const token = this.dataset.token;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This fleet will be permanently deleted.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/fleet/delete/${fleetId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            Swal.fire('Deleted!', data.message, 'success').then(() => {
+                                location.reload(); 
+                            });
+                        } else {
+                            Swal.fire('Error!', 'Something went wrong.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error!', 'Request failed.', 'error');
+                    });
+                }
+            });
+        });
+    });
+});
+</script>
+
+
 
 @endsection

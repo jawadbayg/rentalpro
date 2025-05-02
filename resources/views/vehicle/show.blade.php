@@ -185,21 +185,22 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmBookingModalLabel">Confirm Booking</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <a type="button" class="go-back-modal-btn me-2" onclick="goBackToBooking()">
+          <i class="fa fa-arrow-left"></i>
+        </a>
+        <h5 class="modal-title mb-0" id="confirmBookingModalLabel">Confirm Booking</h5>
       </div>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
 
-      <div class="back-btn-container">
-        <button type="button" class="btn-black-sm" onclick="goBackToBooking()">Back</button>
-      </div>
 
       <div class="modal-body text-center">
-        <p class="mb-4">Would you like to pay now or later?</p>
+      <p class="mb-2">Your payment due date is <strong><span id="due-date-display">[Not Selected]</span></strong></p>
 
         <div class="d-flex justify-content-center gap-3">
-          <button type="button" class="btn-black-sm" onclick="submitBookingForm('paid')">Pay Now</button>
-          <button type="button" class="btn-black-sm" onclick="openPayLaterModal()">Pay Later</button>
+          <button type="button" class="btn-black-sm" onclick="openPayLaterModal()">Next Step</button>
         </div>
       </div>
 
@@ -212,13 +213,14 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="payLaterModalLabel">Confirm Your Booking</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <a type="button" class="go-back-modal-btn me-2" onclick="goBackToSecondModal()"><i class="fa fa-arrow-left"></i></a>
+        <h5 class="modal-title mb-0" id="payLaterModalLabel">Confirm Your Booking</h5>
       </div>
-      <div class="back-btn-container">
-        <button type="button" class="btn-black-sm" onclick="goBackToSecondModal()">Back</button>
-      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
       <div class="modal-body">
         <h5 class="mb-4">Booking Details</h5>
         
@@ -356,6 +358,14 @@
     if (!validateBookingForm()) {
         return;
     }
+    const toDate = document.getElementById('to_date').value;
+    const formattedDueDate = new Date(toDate).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    document.getElementById('due-date-display').textContent = formattedDueDate;
+  
     let bookingModalEl = document.getElementById('bookingModal');
     let bookingModal = bootstrap.Modal.getInstance(bookingModalEl);
 
