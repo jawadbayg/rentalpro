@@ -82,7 +82,7 @@
                     <p><strong>Provider:</strong> {{ $invoice->fp->name }}</p>
                     <p><strong>Email:</strong> {{ $invoice->fp->email }}</p>
                     <p><strong>Vehicle:</strong> {{ $invoice->fleet->vehicle_name }}</p>
-                    <p><strong>Address:</strong> {{ $invoice->fp->address }}</p>        
+                    <p><strong>Address:</strong> {{ $invoice->fp->fpDetail->address }}</p>        
                 </td>
             </tr>
         </table>

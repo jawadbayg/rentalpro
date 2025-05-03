@@ -41,6 +41,10 @@ class Fleet extends Model
     {
         return $this->hasMany(Booking::class, 'fleet_id');
     }
+    public function fpDetail()
+    {
+        return $this->belongsTo(FpDetail::class,'user_id');
+    }
 
 
 }

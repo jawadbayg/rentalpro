@@ -344,36 +344,40 @@
     });
 
     function checkDateAvailability(date, type) {
-        const payload = {
-            from_date: fromDateInput.value,
-            to_date: toDateInput.value
-        };
+    const urlParts = window.location.pathname.split('/');
+    const vehicleId = urlParts[urlParts.length - 1]; 
 
-        fetch('/check-date', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-            const errorDivId = type === 'from' ? 'from_date_error' : 'to_date_error';
-            const errorDiv = document.getElementById(errorDivId);
+    const payload = {
+        id: vehicleId, 
+        from_date: fromDateInput.value,
+        to_date: toDateInput.value
+    };
 
-            if (!data.available) {
-                errorDiv.textContent = data.message;
-            } else {
-                errorDiv.textContent = '';
-            }
+    fetch('/check-date', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const errorDivId = type === 'from' ? 'from_date_error' : 'to_date_error';
+        const errorDiv = document.getElementById(errorDivId);
 
-            toggleNextStepButton();
-        })
-        .catch(error => {
-            console.error('Error checking date availability:', error);
-        });
-    }
+        if (!data.available) {
+            errorDiv.textContent = data.message;
+        } else {
+            errorDiv.textContent = '';
+        }
+
+        toggleNextStepButton();
+    })
+    .catch(error => {
+        console.error('Error checking date availability:', error);
+    });
+}
 
     function toggleNextStepButton() {
         const fromError = document.getElementById('from_date_error').textContent.trim();

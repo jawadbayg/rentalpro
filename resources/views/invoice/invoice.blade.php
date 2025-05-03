@@ -75,7 +75,7 @@
                     <h4>Fleet Provider Details</h4>
                     <p><strong>Provider:</strong> {{ $fp->name }}</p>
                     <p><strong>Vehicle:</strong> {{ $fleet->vehicle_name }}</p>
-                    <p><strong>Address:</strong> {{ $fleet->address }}</p>
+                    <p><strong>Address:</strong> {{ $fp->fpDetail->address }}</p>
                 </td>
             </tr>
         </table>

@@ -179,9 +179,10 @@ class BookingController extends Controller
     {
         $fromDate = $request->input('from_date');
         $toDate = $request->input('to_date');
-
+        $vehicle_id = $request->input('id');
         if ($fromDate) {
             $bookingExists = Booking::whereNull('is_cancelled')
+                ->where('fleet_id',$vehicle_id)
                 ->whereDate('from_date', '<=', $fromDate)
                 ->whereDate('to_date', '>=', $fromDate)
                 ->exists();
@@ -201,6 +202,7 @@ class BookingController extends Controller
 
         if ($toDate) {
             $bookingExists = Booking::whereNull('is_cancelled')
+                ->where('fleet_id',$vehicle_id)
                 ->whereDate('from_date', '<=', $toDate)
                 ->whereDate('to_date', '>=', $toDate)
                 ->first();
