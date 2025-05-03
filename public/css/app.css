@@ -414,3 +414,17 @@ input:-webkit-autofill {
     background-color: white;
     padding: 30px;
   }
+  .explore_more_section{
+    font-family: 'Poppins',sans-serif;
+    background-color: white;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 20px;
+  }
+  .payment-history-container{
+    font-family: 'Poppins',sans-serif;
+    background-color: white;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 20px;
+  }

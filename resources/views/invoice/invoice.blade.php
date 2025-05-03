@@ -58,6 +58,7 @@
                 <p><strong>Booking ID:</strong> {{ $booking->booking_no }}</p>
                 <p><strong>Payment Status:</strong> {{ ucfirst($booking->payment_status) }}</p>
                 <p><strong>Issued On:</strong> {{ $booking->created_at->format('Y-m-d') }}</p>
+                <p><strong>Due Date:</strong> {{ $booking->to_date}}</p>
             </div>
         </div>
 
@@ -68,7 +69,7 @@
                     <h4>Customer Details</h4>
                     <p><strong>Name:</strong> {{ $customer->name }}</p>
                     <p><strong>Email:</strong> {{ $customer->email }}</p>
-                    <p><strong>Address:</strong> {{ $customer->address }}</p>
+                    <!-- <p><strong>Address:</strong> {{ $customer->address }}</p> -->
                 </td>
                 <td style="width: 50%; vertical-align: top;">
                     <h4>Fleet Provider Details</h4>

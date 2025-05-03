@@ -64,7 +64,7 @@ class BookingController extends Controller
             'fleet_id' => $booking->fleet_id,
             'customer_id' => $booking->customer_id,
             'payment_status' => $booking->payment_status,
-            'due_date' => now()->addDays(7)->toDateString(),
+            'due_date' => $booking->to_date,
         ]);
         $pdf = Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
         $customer = User::find($booking->customer_id);
@@ -83,7 +83,8 @@ class BookingController extends Controller
         }
         elseif(Auth::user()->hasRole('User')){
             $invoices = Invoice::with(['booking', 'customer', 'fp', 'fleet'])
-            ->where('customer_id',$auth_id)->get();
+            ->where('customer_id',$auth_id)
+            ->where('payment_status','pending')->get();
         }
         else{
             $invoices = Invoice::with(['booking', 'customer', 'fp', 'fleet'])->get(); //Admin

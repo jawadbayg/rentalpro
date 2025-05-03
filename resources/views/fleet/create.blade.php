@@ -87,7 +87,7 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="mileage" class="form-label">Mileage (optional)</label>
+                <label for="mileage" class="form-label">Mileage</label>
                 <input type="number" class="form-control @error('mileage') is-invalid @enderror" 
                        id="mileage" name="mileage" value="{{ old('mileage') }}">
                 @error('mileage')
@@ -96,7 +96,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="fuel_type" class="form-label">Fuel Type (optional)</label>
+                <label for="fuel_type" class="form-label">Fuel Type</label>
                 <input type="text" class="form-control @error('fuel_type') is-invalid @enderror" 
                        id="fuel_type" name="fuel_type" value="{{ old('fuel_type') }}">
                 @error('fuel_type')
@@ -112,6 +112,41 @@
             @error('manufacturing_year')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="no_of_seats" class="form-label">No. of seats</label>
+                <input type="number" class="form-control @error('no_of_seats') is-invalid @enderror" 
+                    id="no_of_seats" name="no_of_seats" value="{{ old('no_of_seats') }}">
+                @error('no_of_seats')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>  
+            <div class="col-md-3">
+                <label for="no_of_doors" class="form-label">No. of doors</label>
+                <input type="number" class="form-control @error('no_of_doors') is-invalid @enderror" 
+                    id="no_of_doors" name="no_of_doors" value="{{ old('no_of_doors') }}">
+                @error('no_of_doors')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>  
+            <div class="col-md-3">
+                <label for="no_of_bags" class="form-label">No. of bags space</label>
+                <input type="number" class="form-control @error('no_of_bags') is-invalid @enderror" 
+                    id="no_of_bags" name="no_of_bags" value="{{ old('no_of_bags') }}">
+                @error('no_of_bags')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>  
+            <div class="col-md-3">
+                <label for="color" class="form-label">Color</label>
+                <input type="text" class="form-control @error('color') is-invalid @enderror" 
+                    id="color" name="color" value="{{ old('color') }}">
+                @error('color')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>  
         </div>
 
         <div class="mb-3">
@@ -137,7 +172,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="images">Vehicle Images (optional)</label>
+            <label for="images">Vehicle Images</label>
             <input type="file" name="images[]" class="form-control @error('images.*') is-invalid @enderror" multiple>
             @error('images.*')
                 <span class="text-danger">{{ $message }}</span>

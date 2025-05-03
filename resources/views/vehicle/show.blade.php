@@ -7,16 +7,26 @@
         margin-bottom: 35vh !important;
     }
     .btn-next-step.disabled {
-    opacity: 0.5; /* Fades the button */
-    pointer-events: none; /* Prevents clicks */
-    cursor: not-allowed; /* Changes the cursor to indicate it's not clickable */
-    background-color: #cccccc; /* You can adjust this to match your design */
-    color: #666666; /* Change text color to show it's disabled */
+    opacity: 0.5; 
+    pointer-events: none; 
+    cursor: not-allowed;
+    background-color: #cccccc; 
+    color: #666666; 
   }
 
   .btn-next-step {
-      transition: all 0.3s ease; /* Adds a smooth transition for changes */
+      transition: all 0.3s ease;
   }
+
+    .compact-table th, .compact-table td {
+        padding-top: 2px !important;
+        padding-bottom: 0px !important;
+        line-height: 1.9;
+    }
+    .compact-table tr {
+        margin-bottom: 0 !important;
+    }
+
 
 </style>
 <div class="container cards_container">
@@ -35,7 +45,7 @@
                     <p><strong>{{ $fleet->user->name }}</strong></p>
                     <p><strong>Email:</strong> {{ $fleet->user->email }}</p>
                     <p><strong>Address:</strong>{{ $fleet->user->fpDetail->address }}</p>
-                    <button class="btn-outline"> Contact</button>
+                    <!-- <button class="btn-outline"> Contact</button> -->
                     @if ($already_booked == true)
                     <button class="btn-disabled mt-3 disabled" aria-disabled="true" style="pointer-events: none;">
                         Already Booked
@@ -55,23 +65,77 @@
                     Vehicle Information
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <p><strong>Vehicle Name:</strong> {{ $fleet->vehicle_name }}</p>
-                            <p><strong>Type:</strong> {{ $fleet->vehicle_type }}</p>
-                            <p><strong>License Plate:</strong> {{ $fleet->license_plate }}</p>
-                            <p><strong>Charges Per Day:</strong> £{{ $fleet->price_per_day }}</p>
-                            <!-- <p><strong>Year:</strong> {{ $fleet->year }}</p> -->
-                        </div>
-                        <div class="col-md-6 text-center ">
-                            @if($fleet->images->count() > 0)
-                            <img src="{{ asset('storage/' . $fleet->images->first()->image) }}" class="card-img-top right_container_image" alt="Vehicle Image" style="height: 200px; object-fit: cover;">
-                            @else
-                                <img src="{{ asset('default-vehicle.png') }}" alt="Default Vehicle" class="img-fluid rounded" style="max-width: 100%; height: auto;">
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                  <div class="row mb-4">
+                      <div class="col-md-6">
+                          <table class="table table-bordered table-sm compact-table">
+                              <tbody>
+                                  <tr>
+                                      <th>Vehicle Name</th>
+                                      <td>{{ $fleet->vehicle_name }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Type</th>
+                                      <td>{{ $fleet->vehicle_type }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>License Plate</th>
+                                      <td>{{ $fleet->license_plate }}</td>
+                                  </tr>
+                                  @if ($fleet->no_of_seats)
+                                  <tr>
+                                      <th>No. of Seats</th>
+                                      <td>{{ $fleet->no_of_seats }}</td>
+                                  </tr>
+                                  @endif
+                                  @if ($fleet->no_of_doors)
+                                  <tr>
+                                      <th>No. of Doors</th>
+                                      <td>{{ $fleet->no_of_doors }}</td>
+                                  </tr>
+                                  @endif
+                                  @if ($fleet->no_of_bags)
+                                  <tr>
+                                      <th>No. of Bag Space</th>
+                                      <td>{{ $fleet->no_of_bags }}</td>
+                                  </tr>
+                                  @endif
+                                  @if ($fleet->color)
+                                  <tr>
+                                      <th>Color</th>
+                                      <td>{{ $fleet->color }}</td>
+                                  </tr>
+                                  @endif
+                                  @if ($fleet->mileage)
+                                  <tr>
+                                      <th>Mileage</th>
+                                      <td>{{ $fleet->mileage }} Km/L</td>
+                                  </tr>
+                                  @endif
+                                  @if ($fleet->fuel_type)
+                                  <tr>
+                                      <th>Fuel Type</th>
+                                      <td>{{ $fleet->fuel_type }}</td>
+                                  </tr>
+                                  @endif
+                                  <tr>
+                                      <th>Charges Per Day</th>
+                                      <td>£{{ $fleet->price_per_day }}</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                      <div class="col-md-6 d-flex align-items-center justify-content-center">
+                      @if($fleet->images->count() > 0)
+                          <img src="{{ asset('storage/' . $fleet->images->first()->image) }}" class="card-img-top right_container_image" alt="Vehicle Image" style="height: 250px; object-fit: cover;">
+                      @else
+                          <img src="{{ asset('default-vehicle.png') }}" alt="Default Vehicle" class="img-fluid rounded" style="max-width: 100%; height: auto;">
+                      @endif
+                  </div>
+
+                  </div>
+              </div>
+
+
             </div>
         </div>
     </div>
@@ -169,7 +233,7 @@
 
           <div class="text-center">
             <p class="mb-4">Please login to book this vehicle.</p>
-            <a href="{{ route('login') }}" class="btn-black">Login</a>
+            <a href="{{ route('login') }}" class="btn-blue">Login</a>
           </div>
 
         @endif
@@ -482,7 +546,7 @@
             confirmButtonText: 'OK'
         });
 
-        window.location.reload();
+        window.location.href = '/my-bookings';
 
         } catch (error) {
         Swal.fire({

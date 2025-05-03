@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container mt-4 payment-history-container">
     <h2 class="mb-4">Payment History</h2>
 
     <table id= "paymentsTable" class="table table-bordered table-striped">

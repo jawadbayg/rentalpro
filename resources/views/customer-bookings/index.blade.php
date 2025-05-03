@@ -30,7 +30,10 @@
                         @if(Auth::user()->hasRole('Admin'))
                             <th>Rental Pro Amount</th>
                         @endif
+                        @if (Auth::user()->hasRole('User'))
+                        @else
                         <th>Status</th>
+                        @endif  
                         <th>Payment Status</th>
                         <th>Actions</th>
                     </tr>
@@ -55,9 +58,12 @@
                                 @if(Auth::user()->hasRole('Admin'))
                                     <td>£{{ number_format($booking->total_price * 0.20, 2) }}</td>
                                 @endif
+                                @if (Auth::user()->hasRole('User'))
+                                @else
                                 <td class="{{ $booking->status == 'cancelled' ? 'text-danger' : '' }}">
-                                    {{ $booking->status }}
+                                    {{ $booking->status == 'pending' ? 'Booked' : $booking->status }}
                                 </td>
+                                @endif
                                 <td>{{ $booking->payment_status }}</td>
                                 <td>
                                     @if(Auth::user()->hasRole('Admin')) 

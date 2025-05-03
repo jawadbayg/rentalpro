@@ -156,7 +156,7 @@
                         @guest
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('About us') }}</a>
+                                    <a class="nav-link" href="{{ route('about.us.index') }}">{{ __('About us') }}</a>
                                 </li>
                             @endif
                             @if (Route::has('login'))

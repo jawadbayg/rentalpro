@@ -75,7 +75,7 @@
                     <h4>Customer Details</h4>
                     <p><strong>Name:</strong> {{ $invoice->customer->name }}</p>
                     <p><strong>Email:</strong> {{ $invoice->customer->email }}</p>
-                    <p><strong>Address:</strong> {{ $invoice->customer->address }}</p>
+                    <!-- <p><strong>Address:</strong> {{ $invoice->customer->address }}</p> -->
                 </td>
                 <td style="width: 50%; vertical-align: top;">
                     <h4>Fleet Provider Details</h4>
