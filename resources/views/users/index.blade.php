@@ -41,11 +41,16 @@
                     </td>
                     <td>
                         <a class="btn-black-sm" href="{{ route('users.edit',$user->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                        <form method="POST" action="{{ route('users.destroy', $user->id) }}" style="display:inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-black-sm"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </form>
+                        @if(!$user->hasRole('Admin'))
+                            <form method="POST" action="{{ route('users.destroy', $user->id) }}" style="display:inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-black-sm">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        @endif
+
                     </td>
                 </tr>
             @endforeach

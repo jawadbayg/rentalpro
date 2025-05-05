@@ -176,75 +176,90 @@
 
       <div class="modal-body">
 
-        @if(Auth::check())
-          <form action="{{ route('bookings.store') }}" method="POST">
-            @csrf
+      @if(Auth::check())
 
-            <!-- Hidden Inputs -->
-            <input type="hidden" name="fp_id" value="{{ $fleet->user_id }}"> <!-- Assuming fp_id is the Fleet Provider (owner of car) -->
-            <input type="hidden" name="fleet_id" value="{{ $fleet->id }}">
-            <input type="hidden" name="customer_id" value="{{ Auth::id() }}">
-            <input type="hidden" name="payment_status" value="pending"> <!-- Default payment status -->
-            <input type="hidden" name="total_price" id="hidden_total_price">
+        @php
+            $validation = \App\Models\UserValidation::where('user_id', Auth::id())->first();
+        @endphp
 
-            <!-- From Date -->
-            <div class="mb-3">
-              <label for="from_date" class="form-label">From Date <span class="text-danger">*</span></label>
-              <input type="text" id="from_date" name="from_date" class="form-control datepicker" required autocomplete="off">
-              <div id="from_date_error" class="text-danger small mt-1"></div>
-            </div>
+        @if($validation && $validation->status === 'approved')
+            <form action="{{ route('bookings.store') }}" method="POST">
+                @csrf
 
-            <!-- To Date -->
-            <div class="mb-3">
-              <label for="to_date" class="form-label">To Date <span class="text-danger">*</span></label>
-              <input type="text" id="to_date" name="to_date" class="form-control datepicker" required autocomplete="off">
-              <div id="to_date_error" class="text-danger small mt-1"></div>
-            </div>
+                <input type="hidden" name="fp_id" value="{{ $fleet->user_id }}">
+                <input type="hidden" name="fleet_id" value="{{ $fleet->id }}">
+                <input type="hidden" name="customer_id" value="{{ Auth::id() }}">
+                <input type="hidden" name="payment_status" value="pending">
+                <input type="hidden" name="total_price" id="hidden_total_price">
 
-            <!-- Booking Summary -->
-            <div class="mb-3">
-              <label class="form-label">Booking Summary</label>
-              <div class="d-flex align-items-center">
-                <div class="input-group me-2" style="max-width: 150px;">
-                  <span class="input-group-text">£</span>
-                  <input type="text" id="charges_per_day" class="form-control" value="{{ $fleet->price_per_day }}" readonly>
+                <div class="mb-3">
+                  <label for="from_date" class="form-label">From Date <span class="text-danger">*</span></label>
+                  <input type="text" id="from_date" name="from_date" class="form-control datepicker" required autocomplete="off">
+                  <div id="from_date_error" class="text-danger small mt-1"></div>
                 </div>
-                <span class="mx-2 fw-bold">×</span>
-                <div class="input-group me-2" style="max-width: 100px;">
-                  <input type="text" id="days" class="form-control" value="0" readonly>
-                  <span class="input-group-text">Days</span>
+
+
+                <div class="mb-3">
+                  <label for="to_date" class="form-label">To Date <span class="text-danger">*</span></label>
+                  <input type="text" id="to_date" name="to_date" class="form-control datepicker" required autocomplete="off">
+                  <div id="to_date_error" class="text-danger small mt-1"></div>
                 </div>
-                <span class="mx-2 fw-bold">=</span>
-                <div class="input-group" style="max-width: 180px;">
-                  <span class="input-group-text">£</span>
-                  <input type="text" id="total_cost" class="form-control" value="0" readonly>
+
+
+                <div class="mb-3">
+                  <label class="form-label">Booking Summary</label>
+                  <div class="d-flex align-items-center">
+                    <div class="input-group me-2" style="max-width: 150px;">
+                      <span class="input-group-text">£</span>
+                      <input type="text" id="charges_per_day" class="form-control" value="{{ $fleet->price_per_day }}" readonly>
+                    </div>
+                    <span class="mx-2 fw-bold">×</span>
+                    <div class="input-group me-2" style="max-width: 100px;">
+                      <input type="text" id="days" class="form-control" value="0" readonly>
+                      <span class="input-group-text">Days</span>
+                    </div>
+                    <span class="mx-2 fw-bold">=</span>
+                    <div class="input-group" style="max-width: 180px;">
+                      <span class="input-group-text">£</span>
+                      <input type="text" id="total_cost" class="form-control" value="0" readonly>
+                    </div>
+                  </div>
                 </div>
-              </div>
+
+
+                <div class="text-end">
+                  <button type="button" class="btn-black-sm btn-next-step" onclick="openConfirmBookingModal()">Next Step</button>
+                </div>
+
+            </form>
+
+                @elseif($validation && $validation->status === 'pending')
+
+                    <div class="text-center">
+                        <p class="mb-4">Please Wait! Your Verification is in Process.</p>
+                    </div>
+
+                @else
+
+                    <div class="text-center">
+                        <p class="mb-4">Your account is not verified. Please complete the verification process to book a vehicle.</p>
+                    </div>
+                @endif
+
+            @else
+
+            <div class="text-center">
+                <p class="mb-4">Please login to book this vehicle.</p>
+                <a href="{{ route('login') }}" class="btn-blue">Login</a>
             </div>
-
-            <!-- Replace the submit button with a trigger -->
-            <div class="text-end">
-              <button type="button" class="btn-black-sm btn-next-step" onclick="openConfirmBookingModal()">Next Step</button>
-            </div>
-
-          </form>
-
-        @else
-
-          <div class="text-center">
-            <p class="mb-4">Please login to book this vehicle.</p>
-            <a href="{{ route('login') }}" class="btn-blue">Login</a>
-          </div>
-
         @endif
-
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- Confirm Booking Modal -->
+
 <div class="modal fade" id="confirmBookingModal" tabindex="-1" aria-labelledby="confirmBookingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
