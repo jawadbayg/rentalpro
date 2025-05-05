@@ -62,13 +62,14 @@
                             </td>
                             <td>{{ $fleet->rental_status }}</td>
                             <td>
-                            <a href="{{ route('fleet.edit', $fleet->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <button 
-    class="btn btn-danger btn-sm delete-fleet-btn" 
-    data-id="{{ $fleet->id }}" 
-    data-token="{{ csrf_token() }}">
-    Delete
-</button>
+                            <a href="{{ route('fleet.edit', $fleet->id) }}" class="btn btn-warning btn-sm">Edit</a>     
+                            <!-- <button 
+                                class="btn btn-danger btn-sm delete-fleet-btn" 
+                                data-id="{{ $fleet->id }}" 
+                                data-token="{{ csrf_token() }}">
+                                Delete
+                            </button> -->
+                           
 
 
 
