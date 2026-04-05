@@ -1,148 +1,125 @@
-<div class="admin-dashboard-container py-4">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <h5>Total Active Fleets</h5>
-                <h3>{{ $totalFleets ?? '0' }}</h3>
+<div class="dashboard-shell dashboard-shell--fp">
+    <header class="admin-dash-header">
+        <div>
+            <p class="admin-dash-header__eyebrow">Fleet provider</p>
+            <h1 class="admin-dash-header__title">Welcome back, {{ Auth::user()->name }}</h1>
+            <p class="admin-dash-header__subtitle">Track your vehicles, bookings, and earnings in one place.</p>
+        </div>
+    </header>
+
+    <div class="row g-3 g-xl-4 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="admin-stat-card">
+                <span class="admin-stat-card__icon admin-stat-card__icon--teal"><i class="fas fa-car"></i></span>
+                <p class="admin-stat-card__label">Active fleets</p>
+                <p class="admin-stat-card__value">{{ $totalFleets ?? '0' }}</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <h5>Total Bookings</h5>
-                <h3>{{ $totalBookings ?? '0' }}</h3>
+        <div class="col-6 col-lg-3">
+            <div class="admin-stat-card">
+                <span class="admin-stat-card__icon admin-stat-card__icon--gold"><i class="fas fa-calendar-check"></i></span>
+                <p class="admin-stat-card__label">Bookings</p>
+                <p class="admin-stat-card__value">{{ $totalBookings ?? '0' }}</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <h5>Total Invoices</h5>
-                <h3>{{ $totalInvoices ?? '0' }}</h3>
+        <div class="col-6 col-lg-3">
+            <div class="admin-stat-card">
+                <span class="admin-stat-card__icon admin-stat-card__icon--teal"><i class="fas fa-file-invoice"></i></span>
+                <p class="admin-stat-card__label">Invoices</p>
+                <p class="admin-stat-card__value">{{ $totalInvoices ?? '0' }}</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="dashboard-card">
-                <h5>To be Paid Invoices</h5>
-                <h3>{{ $ToBePaidInvoices ?? '0' }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="graph-container py-4">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="graph-card">
-                    <h5>Invoices Total (Paid amount & Pending Amounts)</h5>
-                        <div class="chart-div">
-                            <canvas id="pendingAmountChart" class="chart-smaller" height="120"></canvas>
-                        </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="graph-card">
-                    <h5>Revenue Total</h5>
-                    <div class="chart-div" style="display: flex; align-items: center; justify-content: center; height: 300px;">
-                        <canvas id="revenueChartFP" style="max-height: 100%; max-width: 100%;"></canvas>
-                    </div>
-                </div>
+        <div class="col-6 col-lg-3">
+            <div class="admin-stat-card">
+                <span class="admin-stat-card__icon admin-stat-card__icon--warn"><i class="fas fa-hourglass-half"></i></span>
+                <p class="admin-stat-card__label">Unpaid invoices</p>
+                <p class="admin-stat-card__value">{{ $ToBePaidInvoices ?? '0' }}</p>
             </div>
         </div>
     </div>
 
+    <section class="admin-quick-links mb-4">
+        <h2 class="admin-section-title">Quick links</h2>
+        <div class="row g-2 g-md-3">
+            <div class="col-6 col-md-3">
+                <a href="{{ route('fleet.index') }}" class="admin-quick-link"><i class="fas fa-car"></i><span>Manage fleet</span></a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{{ route('customer.bookings.index') }}" class="admin-quick-link"><i class="fas fa-calendar-days"></i><span>Bookings</span></a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{{ route('invoices.index') }}" class="admin-quick-link"><i class="fas fa-file-invoice-dollar"></i><span>Invoices</span></a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{{ route('payments.index') }}" class="admin-quick-link"><i class="fas fa-credit-card"></i><span>Payments</span></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="admin-chart-card">
+                <div class="admin-chart-card__head">
+                    <h3 class="admin-chart-card__title">Invoice amounts</h3>
+                    <p class="admin-chart-card__hint">Paid vs pending (your share)</p>
+                </div>
+                <div class="admin-chart-card__body admin-chart-card__body--doughnut">
+                    <canvas id="pendingAmountChart" height="260"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="admin-chart-card">
+                <div class="admin-chart-card__head">
+                    <h3 class="admin-chart-card__title">Revenue by month</h3>
+                    <p class="admin-chart-card__hint">Earnings trend (current year)</p>
+                </div>
+                <div class="admin-chart-card__body admin-chart-card__body--line">
+                    <canvas id="revenueChartFP"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<style>
-    .admin-dashboard-container{
-        font-family: 'Poppins',sans-serif;
-    }
-    .dashboard-card {
-        background-color:white;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 0 10px rgba(0,0,0,0.06);
-        transition: transform 0.2s ease;
-    }
-    .dashboard-card h5 {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 10px;
-        font-weight: 500;
-    }
-    .dashboard-card h3 {
-        font-size: 28px;
-        font-weight: 700;
-        color: #111;
-    }
-    .dashboard-card:hover {
-        transform: translateY(-3px);
-    }
-    .graph-container {
-    font-family: 'Poppins', sans-serif;
-    }
-    
-    .graph-card {
-        background-color: #fff;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.06);
-        transition: transform 0.2s ease;
-    }
-
-    .graph-card h5 {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 15px;
-        font-weight: 500;
-    }
-
-    .graph-placeholder {
-        height: 200px;
-        background-color: #f2f2f2;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #999;
-        font-size: 14px;
-    }
-    .chart-smaller {
-        width: 300px !important;  
-        height: 300px !important;
-    }
-    .chart-div{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    function renderPendingVsPaidChart(pendingAmount, paidAmount) {
-        const ctx = document.getElementById("pendingAmountChart").getContext('2d');
+(function () {
+    const brandTeal = '#01232e';
+    const brandGold = '#d4a056';
+    const pending = {{ $totalPendingAmount ?? 0 }};
+    const paid = {{ $totalPaidAmount ?? 0 }};
 
-        new Chart(ctx, {
+    function renderPendingVsPaidChart() {
+        const el = document.getElementById('pendingAmountChart');
+        if (!el || typeof Chart === 'undefined') return;
+        new Chart(el.getContext('2d'), {
             type: 'doughnut',
             data: {
-                labels: ['Pending Amount', 'Paid Amount'],
+                labels: ['Pending amount', 'Paid amount'],
                 datasets: [{
-                    data: [pendingAmount, paidAmount],
-                    backgroundColor: ['rgb(12, 93, 123)', '#36A2EB'],
-                    borderColor: ['#fff', '#fff'],
-                    borderWidth: 2
+                    data: [pending, paid],
+                    backgroundColor: [brandGold, brandTeal],
+                    borderColor: '#fff',
+                    borderWidth: 3,
+                    hoverOffset: 6
                 }]
             },
             options: {
                 responsive: true,
-                aspectRatio: 1, 
+                maintainAspectRatio: false,
+                cutout: '58%',
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: { padding: 16, font: { family: "'DM Sans', sans-serif", size: 12 } }
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
-                                return context.label + ': £ ' + context.parsed;
+                            label: function (context) {
+                                const v = context.raw !== undefined ? context.raw : context.parsed;
+                                return ' ' + context.label + ': £' + Number(v).toLocaleString();
                             }
                         }
                     }
@@ -151,42 +128,55 @@
         });
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const totalPendingAmount = {{ $totalPendingAmount ?? 0 }};
-        const totalPaidAmount = {{ $totalPaidAmount ?? 0 }};
-        renderPendingVsPaidChart(totalPendingAmount, totalPaidAmount);
-    });
-</script>
-
-
-<script>
-    const ctx = document.getElementById('revenueChartFP').getContext('2d');
-
-    const revenueData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [{
-            label: 'Revenue (£)',
-            data: @json($revenueByMonth),
-            fill: true,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            tension: 0.4
-        }]
-    };
-
-    const config = {
-        type: 'line',
-        data: revenueData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
+    function renderRevenueLine() {
+        const el = document.getElementById('revenueChartFP');
+        if (!el || typeof Chart === 'undefined') return;
+        new Chart(el.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Revenue (£)',
+                    data: @json($revenueByMonth ?? array_fill(0, 12, 0)),
+                    fill: true,
+                    backgroundColor: 'rgba(1, 35, 46, 0.12)',
+                    borderColor: brandTeal,
+                    borderWidth: 2,
+                    tension: 0.35,
+                    pointBackgroundColor: brandGold,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(1, 35, 46, 0.06)' },
+                        ticks: { font: { family: "'DM Sans', sans-serif" } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: "'DM Sans', sans-serif" }, maxRotation: 0 }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: { font: { family: "'DM Sans', sans-serif" } }
+                    }
                 }
             }
-        }
-    };
+        });
+    }
 
-    new Chart(ctx, config);
+    document.addEventListener('DOMContentLoaded', function () {
+        renderPendingVsPaidChart();
+        renderRevenueLine();
+    });
+})();
 </script>

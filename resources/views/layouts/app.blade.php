@@ -25,6 +25,7 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -39,61 +40,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     
     <style>
-        /* Sidebar styling */
-        .sidebar {
-            height: calc(1000vh - 50px); 
-            background: rgb(1, 35, 46);
-            padding: 20px;
-            position: fixed;
-            width: 250px;
-            top: 0px; /* Adjust if navbar height changes */
-            overflow-y: auto;
-        }
-        .sidebar a {
-            display: block;
-            color: #333;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            border-radius: 5px;
-            color: white;
-        }
-        .sidebar a:hover {
-            background: rgb(20, 97, 174);
-            color: #fff;
-        }
-
-        /* Main Content */
-        .content-area {
-            margin-left: 250px; /* Space for the sidebar */
-            padding: 20px;
-            width: calc(100% - 250px); /* This will ensure content takes the rest of the space */
-        }
-
-        /* Mobile View */
-        @media (max-width: 768px) {
-            .content-area {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .sidebar {
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: 10;
-                height: 100%; 
-            }
-        }
-        .logo {
-            margin-top: -10px;
-            margin-bottom: 50px;
-            margin-left: 20px;
-            color: white;
-            font-family: 'Times New Roman', Times, serif;
-        }
-
+        /* Sidebar & admin content: see app.css (.sidebar-app, .content-area) */
         .logo-btn {
             font-family: 'Poppins', sans-serif;
             background: none;
@@ -125,13 +72,47 @@
         .navbar .nav-link {
             font-family: 'Poppins', sans-serif !important;
         }
+
+        .rental-navbar {
+            background: linear-gradient(135deg, #01232e 0%, #0a3d4f 50%, #062a36 100%) !important;
+            z-index: 1030;
+            transition: box-shadow 0.25s ease;
+        }
+        .rental-navbar .nav-link {
+            position: relative;
+            padding: 0.5rem 0.85rem !important;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .rental-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0.85rem;
+            right: 0.85rem;
+            bottom: 0.2rem;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.85);
+            transform: scaleX(0);
+            transition: transform 0.25s ease;
+        }
+        .rental-navbar .nav-link:hover {
+            color: #fff !important;
+            transform: translateY(-1px);
+        }
+        .rental-navbar .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+        .rental-navbar .navbar-brand .logo-btn {
+            font-family: 'Outfit', 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
     </style>
 </head>
 <body>
     <div id="app">
         @if (!in_array(Route::currentRouteName(), ['login', 'register', 'password.request', 'password.reset']))
         <!-- Top Navbar -->
-        <nav class="navbar navbar-expand-md navbar-dark" style="background: rgb(1, 35, 46);">
+        <nav class="navbar navbar-expand-md navbar-dark rental-navbar sticky-top shadow-sm">
 
             <div class="container">
                 @if (Auth::guest() || !Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('FP'))
@@ -206,38 +187,39 @@
 @endif
                 @if (Auth::check())
                     @if (Auth::user()->hasRole('Admin'))
-                        <div class="sidebar">
-                            <div class="logo">
-                                <h3>
-                                    <button onclick="window.location.href='{{ url('/home') }}'" class="logo-btn">
-                                        Rental Pro
-                                    </button>
-                                </h3>
+                        <div class="sidebar sidebar-app">
+                            <div class="sidebar-app__brand">
+                                <button type="button" onclick="window.location.href='{{ url('/home') }}'" class="logo-btn sidebar-app__logo">
+                                    Rental Pro
+                                </button>
+                                <span class="sidebar-app__badge">Admin</span>
                             </div>
-    
-                    <a href="{{ route('users.index') }}"><i class="fa fa-users"></i> Manage Users</a>
-                    <a href="{{ route('roles.index') }}"><i class="fa fa-user-shield"></i> Manage Roles</a>
-                    <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
-                    <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
-                    <a href="{{ route('invoices.index') }}"><i class="fa fa-box"></i> Invoices</a>
-                    <a href="{{ route('payments.index') }}"><i class="fa fa-box"></i> Payments</a>
-                    <a href="{{ route('verification_requests.index') }}"><i class="fa fa-file"></i> Verification Requests</a>
+                    <nav class="sidebar-app__nav">
+                    <a href="{{ route('users.index') }}"><i class="fas fa-users"></i> Manage Users</a>
+                    <a href="{{ route('roles.index') }}"><i class="fas fa-user-shield"></i> Manage Roles</a>
+                    <a href="{{ route('fleet.index') }}"><i class="fas fa-car"></i> Manage Fleet</a>
+                    <a href="{{ route('customer.bookings.index') }}"><i class="fas fa-calendar-days"></i> Bookings</a>
+                    <a href="{{ route('invoices.index') }}"><i class="fas fa-file-invoice-dollar"></i> Invoices</a>
+                    <a href="{{ route('payments.index') }}"><i class="fas fa-credit-card"></i> Payments</a>
+                    <a href="{{ route('verification_requests.index') }}"><i class="fas fa-clipboard-check"></i> Verification</a>
+                    </nav>
                     </div>
                     @elseif (Auth::user()->hasRole('User'))
 
                     @elseif (Auth::user()->hasRole('FP'))
-                    <div class="sidebar">
-                        <div class="logo">
-                            <h3>
-                                <button onclick="window.location.href='{{ url('/home') }}'" class="logo-btn">
-                                    Rental Pro
-                                </button>
-                            </h3>
+                    <div class="sidebar sidebar-app">
+                        <div class="sidebar-app__brand">
+                            <button type="button" onclick="window.location.href='{{ url('/home') }}'" class="logo-btn sidebar-app__logo">
+                                Rental Pro
+                            </button>
+                            <span class="sidebar-app__badge">Provider</span>
                         </div>
-                        <a href="{{ route('fleet.index') }}"><i class="fa fa-box"></i> Manage Fleet</a>
-                        <a href="{{ route('customer.bookings.index') }}"><i class="fa fa-box"></i> Bookings</a>
-                        <a href="{{ route('invoices.index') }}"><i class="fa fa-box"></i> Invoices</a>
-                        <a href="{{ route('payments.index') }}"><i class="fa fa-box"></i> Payments</a>
+                        <nav class="sidebar-app__nav">
+                        <a href="{{ route('fleet.index') }}"><i class="fas fa-car"></i> Manage Fleet</a>
+                        <a href="{{ route('customer.bookings.index') }}"><i class="fas fa-calendar-days"></i> Bookings</a>
+                        <a href="{{ route('invoices.index') }}"><i class="fas fa-file-invoice-dollar"></i> Invoices</a>
+                        <a href="{{ route('payments.index') }}"><i class="fas fa-credit-card"></i> Payments</a>
+                        </nav>
                     </div>
                     @endif
                 @endif

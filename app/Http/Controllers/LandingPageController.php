@@ -24,11 +24,14 @@ class LandingPageController extends Controller
     }
     public function show($id)
     {
-        $fleet = Fleet::findOrFail($id);
+        $fleet = Fleet::with(['images', 'user.profile', 'user.fpDetail'])
+            ->findOrFail($id);
 
-        $fleets = Fleet::where('status', 'active')
-        ->where('id', '!=', $id)
-        ->take(3)->get(); // for showing more cards below show page
+        $fleets = Fleet::with('images')
+            ->where('status', 'active')
+            ->where('id', '!=', $id)
+            ->take(3)
+            ->get();
 
         $already_booked = false;
         if(Auth::check()){

@@ -1,26 +1,19 @@
-<div id="section1Carousal" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-        @foreach($images as $index => $image)
-            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                <img src="{{ $image }}" class="d-block w-100" alt="..." style="max-height: 500px; object-fit: cover;">
+@php
+    $heroImage = $heroImage ?? 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80';
+@endphp
+<section class="landing-hero" style="--hero-bg-image: url('{{ $heroImage }}');">
+    <div class="landing-hero__overlay"></div>
+    <div class="container landing-hero__content">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-xl-8 text-center">
+                <p class="landing-hero__eyebrow">Premium car rental</p>
+                <h1 class="landing-hero__title">Enjoy Your Ride!</h1>
+                <p class="landing-hero__subtitle">Reserve your vehicle now and enjoy a smooth journey.</p>
+                <div class="landing-hero__actions">
+                    <a href="#featured-fleet" class="btn btn-landing-primary btn-landing-lg">Book Now</a>
+                    <a href="#why-us" class="btn btn-landing-outline btn-landing-lg">Why Rental Pro</a>
+                </div>
             </div>
-        @endforeach
-    </div>
-    <!-- Static caption for all images -->
-    <div class="carousel-caption">
-            <h1 class="ml4">
-                <span class="letters letters-1">Book</span>
-                <span class="letters letters-2">Drive</span>
-                <span class="letters letters-3">Enjoy!</span>
-            </h1>
-            <P class="mt-4"> Your perfect car is just one booking away – reserve your vehicle now and enjoy a smooth ride!</P>
         </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#section1Carousal" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#section1Carousal" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
-</div>
+    </div>
+</section>

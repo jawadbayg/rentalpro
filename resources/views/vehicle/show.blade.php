@@ -1,180 +1,235 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $vtLower = strtolower($fleet->vehicle_type ?? '');
+    $transmission = str_contains($vtLower, 'manual') ? 'Manual' : 'Automatic';
+    $heroUrl = $fleet->images->count() > 0
+        ? asset('storage/' . $fleet->images->first()->image)
+        : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200&q=80';
+    $priceRaw = $fleet->price_per_day;
+    $priceDisplay = $priceRaw !== null && (float) $priceRaw > 0
+        ? '£' . number_format((float) $priceRaw, 0)
+        : 'Ask for quote';
+    $providerAddress = $fleet->user->fpDetail?->address ?? '—';
+@endphp
 
-<style>
-    .modal-content{
-        margin-bottom: 35vh !important;
-    }
-    .btn-next-step.disabled {
-    opacity: 0.5; 
-    pointer-events: none; 
-    cursor: not-allowed;
-    background-color: #cccccc; 
-    color: #666666; 
-  }
+<div class="vehicle-show-page">
+    <div class="container py-4 py-lg-5">
+        <a href="{{ url('/') }}#featured-fleet" class="vehicle-show-back">
+            <i class="fas fa-arrow-left-long me-2"></i>Back to fleet
+        </a>
 
-  .btn-next-step {
-      transition: all 0.3s ease;
-  }
-
-    .compact-table th, .compact-table td {
-        padding-top: 2px !important;
-        padding-bottom: 0px !important;
-        line-height: 1.9;
-    }
-    .compact-table tr {
-        margin-bottom: 0 !important;
-    }
-
-
-</style>
-<div class="container cards_container">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-4 left_container">
-                <div class="card-header text-center">
-                    Provider Information
-                </div>
-                <div class="card-body text-center">
-                @if($fleet->user->profile && $fleet->user->profile->profile_picture)
-                    <img src="{{ asset('storage/' . $fleet->user->profile->profile_picture) }}" alt="User Image" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                @else
-                    <img src="{{ asset('default-user.png') }}" alt="Default User" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                @endif
-                    <p><strong>{{ $fleet->user->name }}</strong></p>
-                    <p><strong>Email:</strong> {{ $fleet->user->email }}</p>
-                    <p><strong>Address:</strong>{{ $fleet->user->fpDetail->address }}</p>
-                    <!-- <button class="btn-outline"> Contact</button> -->
-                    @if ($already_booked == true)
-                    <button class="btn-disabled mt-3 disabled" aria-disabled="true" style="pointer-events: none;">
-                        Already Booked
-                    </button>
-                    @else
-                        <button class="btn-blue mt-3" data-bs-toggle="modal" data-bs-target="#bookingModal">Book Now</button>
+        <div class="row g-4 g-xl-5 align-items-start">
+            <div class="col-lg-8">
+                <div class="vehicle-show-gallery mb-4">
+                    <div class="vehicle-show-hero-frame">
+                        <img
+                            src="{{ $heroUrl }}"
+                            alt="{{ $fleet->vehicle_name }}"
+                            class="vehicle-show-hero-img"
+                            id="vehicle-show-main-image"
+                        >
+                    </div>
+                    @if($fleet->images->count() > 1)
+                        <div class="vehicle-show-thumbs" role="group" aria-label="Vehicle photos">
+                            @foreach($fleet->images as $idx => $img)
+                                @php $thumbSrc = asset('storage/' . $img->image); @endphp
+                                <button type="button" class="vehicle-show-thumb{{ $idx === 0 ? ' is-active' : '' }}" data-src="{{ $thumbSrc }}">
+                                    <img src="{{ $thumbSrc }}" alt="">
+                                </button>
+                            @endforeach
+                        </div>
                     @endif
-
                 </div>
-            </div>
-        </div>
 
-        <!-- Right Side (col-9) -->
-        <div class="col-md-9">
-            <div class="card right_container">
-                <div class="card-header">
-                    Vehicle Information
+                <div class="vehicle-show-heading">
+                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+                        <div>
+                            <h1 class="vehicle-show-title">{{ $fleet->vehicle_name }}</h1>
+                            <p class="vehicle-show-meta mb-0">
+                                <span class="me-3"><i class="fas fa-id-card me-1 opacity-75"></i>{{ $fleet->license_plate }}</span>
+                                <span><i class="fas fa-user-tie me-1 opacity-75"></i>{{ $fleet->vehicle_owner_name }}</span>
+                            </p>
+                        </div>
+                        <div class="vehicle-show-price-badge">
+                            <span class="vehicle-show-price-label">From</span>
+                            <span class="vehicle-show-price-value">{{ $priceDisplay }}@if($priceRaw !== null && (float) $priceRaw > 0)<span class="vehicle-show-price-unit">/day</span>@endif</span>
+                        </div>
+                    </div>
+                    <div class="fleet-card__features vehicle-show-chips">
+                        <span class="fleet-chip"><i class="fas fa-snowflake"></i> A/C</span>
+                        <span class="fleet-chip"><i class="fas fa-gears"></i> {{ $transmission }}</span>
+                        @if($fleet->no_of_seats)
+                            <span class="fleet-chip"><i class="fas fa-user-group"></i> {{ $fleet->no_of_seats }} seats</span>
+                        @endif
+                        @if($fleet->fuel_type)
+                            <span class="fleet-chip"><i class="fas fa-gas-pump"></i> {{ $fleet->fuel_type }}</span>
+                        @endif
+                    </div>
                 </div>
-                <div class="card-body">
-                  <div class="row mb-4">
-                      <div class="col-md-6">
-                          <table class="table table-bordered table-sm compact-table">
-                              <tbody>
-                                  <tr>
-                                      <th>Vehicle Name</th>
-                                      <td>{{ $fleet->vehicle_name }}</td>
-                                  </tr>
-                                  <tr>
-                                      <th>Type</th>
-                                      <td>{{ $fleet->vehicle_type }}</td>
-                                  </tr>
-                                  <tr>
-                                      <th>License Plate</th>
-                                      <td>{{ $fleet->license_plate }}</td>
-                                  </tr>
-                                  @if ($fleet->no_of_seats)
-                                  <tr>
-                                      <th>No. of Seats</th>
-                                      <td>{{ $fleet->no_of_seats }}</td>
-                                  </tr>
-                                  @endif
-                                  @if ($fleet->no_of_doors)
-                                  <tr>
-                                      <th>No. of Doors</th>
-                                      <td>{{ $fleet->no_of_doors }}</td>
-                                  </tr>
-                                  @endif
-                                  @if ($fleet->no_of_bags)
-                                  <tr>
-                                      <th>No. of Bag Space</th>
-                                      <td>{{ $fleet->no_of_bags }}</td>
-                                  </tr>
-                                  @endif
-                                  @if ($fleet->color)
-                                  <tr>
-                                      <th>Color</th>
-                                      <td>{{ $fleet->color }}</td>
-                                  </tr>
-                                  @endif
-                                  @if ($fleet->mileage)
-                                  <tr>
-                                      <th>Mileage</th>
-                                      <td>{{ $fleet->mileage }} Km/L</td>
-                                  </tr>
-                                  @endif
-                                  @if ($fleet->fuel_type)
-                                  <tr>
-                                      <th>Fuel Type</th>
-                                      <td>{{ $fleet->fuel_type }}</td>
-                                  </tr>
-                                  @endif
-                                  <tr>
-                                      <th>Charges Per Day</th>
-                                      <td>£{{ $fleet->price_per_day }}</td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </div>
-                      <div class="col-md-6 d-flex align-items-center justify-content-center">
-                      @if($fleet->images->count() > 0)
-                          <img src="{{ asset('storage/' . $fleet->images->first()->image) }}" class="card-img-top right_container_image" alt="Vehicle Image" style="height: 250px; object-fit: cover;">
-                      @else
-                          <img src="{{ asset('default-vehicle.png') }}" alt="Default Vehicle" class="img-fluid rounded" style="max-width: 100%; height: auto;">
-                      @endif
-                  </div>
 
-                  </div>
-              </div>
-
-
-            </div>
-        </div>
-    </div>
-</div>  
-
-<!-- Explore More Section -->
-<div class="container mt-5 explore_more_section">
-    <h2 class="mb-4 text-center">Explore More!</h2>
-    <div class="row">
-        @foreach($fleets as $item)
-            <div class="col-md-4 mb-4">
-                <div class="card explore_card">
-                    @if($item->images && $item->images->first())
-                        <img src="{{ asset('storage/' . $item->images->first()->image) }}" class="card-img-top" alt="Vehicle Image" style="height: 200px; object-fit: cover;">
-                    @else
-                        <img src="{{ asset('default-vehicle.png') }}" class="card-img-top" alt="Default Vehicle" style="height: 200px; object-fit: cover;">
-                    @endif
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $item->vehicle_name }}</h5>
-                        <p class="card-text">{{ $item->vehicle_type }}</p>
-                        <a href="{{ route('vehicle.show', $item->id) }}" class="btn-blue">View Details</a>
+                <div class="vehicle-show-spec-panel">
+                    <h2 class="vehicle-show-spec-title">Specifications</h2>
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-md-4">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-item__icon"><i class="fas fa-car-side"></i></span>
+                                <div>
+                                    <span class="vehicle-spec-item__label">Type</span>
+                                    <span class="vehicle-spec-item__value">{{ $fleet->vehicle_type }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @if($fleet->no_of_doors)
+                        <div class="col-sm-6 col-md-4">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-item__icon"><i class="fas fa-door-open"></i></span>
+                                <div>
+                                    <span class="vehicle-spec-item__label">Doors</span>
+                                    <span class="vehicle-spec-item__value">{{ $fleet->no_of_doors }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @if($fleet->no_of_bags)
+                        <div class="col-sm-6 col-md-4">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-item__icon"><i class="fas fa-suitcase-rolling"></i></span>
+                                <div>
+                                    <span class="vehicle-spec-item__label">Bag space</span>
+                                    <span class="vehicle-spec-item__value">{{ $fleet->no_of_bags }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @if($fleet->color)
+                        <div class="col-sm-6 col-md-4">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-item__icon"><i class="fas fa-palette"></i></span>
+                                <div>
+                                    <span class="vehicle-spec-item__label">Color</span>
+                                    <span class="vehicle-spec-item__value">{{ $fleet->color }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @if($fleet->mileage)
+                        <div class="col-sm-6 col-md-4">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-item__icon"><i class="fas fa-gauge-high"></i></span>
+                                <div>
+                                    <span class="vehicle-spec-item__label">Mileage</span>
+                                    <span class="vehicle-spec-item__value">{{ $fleet->mileage }} km/L</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        <div class="col-sm-6 col-md-4">
+                            <div class="vehicle-spec-item">
+                                <span class="vehicle-spec-item__icon"><i class="fas fa-calendar-check"></i></span>
+                                <div>
+                                    <span class="vehicle-spec-item__label">Registered</span>
+                                    <span class="vehicle-spec-item__value">{{ \Carbon\Carbon::parse($fleet->registration_date)->format('d M Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        @endforeach
+
+            <div class="col-lg-4">
+                <aside class="vehicle-provider-card vehicle-provider-card--sticky">
+                    <div class="vehicle-provider-card__price">
+                        <span class="vehicle-provider-card__price-label">Daily rate</span>
+                        <span class="vehicle-provider-card__price-num">{{ $priceDisplay }}</span>
+                    </div>
+                    <hr class="vehicle-provider-card__rule">
+                    <h3 class="vehicle-provider-card__heading">Provider</h3>
+                    <div class="text-center mb-3">
+                        @if($fleet->user->profile && $fleet->user->profile->profile_picture)
+                            <img src="{{ asset('storage/' . $fleet->user->profile->profile_picture) }}" alt="" class="vehicle-provider-card__avatar">
+                        @else
+                            <img src="{{ asset('default-user.png') }}" alt="" class="vehicle-provider-card__avatar">
+                        @endif
+                        <p class="vehicle-provider-card__name mb-1">{{ $fleet->user->name }}</p>
+                        <p class="vehicle-provider-card__detail mb-1"><i class="fas fa-envelope me-2 opacity-75"></i>{{ $fleet->user->email }}</p>
+                        <p class="vehicle-provider-card__detail mb-0"><i class="fas fa-location-dot me-2 opacity-75"></i>{{ $providerAddress }}</p>
+                    </div>
+                    @if ($already_booked == true)
+                        <button type="button" class="btn vehicle-show-btn-disabled w-100" disabled aria-disabled="true">Already booked</button>
+                    @else
+                        <button type="button" class="btn btn-vehicle-book w-100" data-bs-toggle="modal" data-bs-target="#bookingModal">Book now</button>
+                    @endif
+                </aside>
+            </div>
+        </div>
     </div>
+
+    @if($fleets->count() > 0)
+    <section class="vehicle-explore-more">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="landing-section__title">Explore more</h2>
+                <p class="landing-section__lead">You might also like these vehicles.</p>
+            </div>
+            <div class="row g-4">
+                @foreach($fleets as $item)
+                    @php
+                        $itemImg = ($item->images && $item->images->first())
+                            ? asset('storage/' . $item->images->first()->image)
+                            : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80';
+                        $itemPrice = $item->price_per_day;
+                        $itemPriceLabel = $itemPrice !== null && (float) $itemPrice > 0
+                            ? '£' . number_format((float) $itemPrice, 0)
+                            : 'Ask for quote';
+                        $itemVt = strtolower($item->vehicle_type ?? '');
+                        $itemTrans = str_contains($itemVt, 'manual') ? 'Manual' : 'Automatic';
+                    @endphp
+                    <div class="col-md-4">
+                        <article class="fleet-card">
+                            <a href="{{ route('vehicle.show', $item->id) }}" class="fleet-card__image-link">
+                                <div class="fleet-card__image-wrap">
+                                    <img src="{{ $itemImg }}" class="fleet-card__image" alt="{{ $item->vehicle_name }}">
+                                </div>
+                            </a>
+                            <div class="fleet-card__body">
+                                <h3 class="fleet-card__title">{{ $item->vehicle_name }}</h3>
+                                <p class="fleet-card__owner"><i class="fas fa-user-tie me-1 opacity-75"></i>{{ $item->vehicle_owner_name }}</p>
+                                <div class="fleet-card__features">
+                                    <span class="fleet-chip"><i class="fas fa-snowflake"></i> A/C</span>
+                                    <span class="fleet-chip"><i class="fas fa-gears"></i> {{ $itemTrans }}</span>
+                                </div>
+                                <div class="fleet-card__footer">
+                                    <div>
+                                        <span class="fleet-card__price-label">From</span>
+                                        <span class="fleet-card__price">{{ $itemPriceLabel }}@if($itemPrice !== null && (float) $itemPrice > 0)<span class="fleet-card__price-unit">/day</span>@endif</span>
+                                    </div>
+                                    <a href="{{ route('vehicle.show', $item->id) }}" class="btn btn-fleet-book">View</a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    @include('partials.footer')
 </div>
 
 <!-- Booking Modal -->
-<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade vehicle-booking-modal" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered vehicle-show-booking-dialog">
+    <div class="modal-content vehicle-modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="bookingModalLabel">Book Vehicle</h5>
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title vehicle-modal-title" id="bookingModalLabel">Book vehicle</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body pt-2">
 
       @if(Auth::check())
 
@@ -193,32 +248,32 @@
                 <input type="hidden" name="total_price" id="hidden_total_price">
 
                 <div class="mb-3">
-                  <label for="from_date" class="form-label">From Date <span class="text-danger">*</span></label>
-                  <input type="text" id="from_date" name="from_date" class="form-control datepicker" required autocomplete="off">
+                  <label for="from_date" class="form-label">From date <span class="text-danger">*</span></label>
+                  <input type="text" id="from_date" name="from_date" class="form-control datepicker vehicle-modal-input" required autocomplete="off">
                   <div id="from_date_error" class="text-danger small mt-1"></div>
                 </div>
 
 
                 <div class="mb-3">
-                  <label for="to_date" class="form-label">To Date <span class="text-danger">*</span></label>
-                  <input type="text" id="to_date" name="to_date" class="form-control datepicker" required autocomplete="off">
+                  <label for="to_date" class="form-label">To date <span class="text-danger">*</span></label>
+                  <input type="text" id="to_date" name="to_date" class="form-control datepicker vehicle-modal-input" required autocomplete="off">
                   <div id="to_date_error" class="text-danger small mt-1"></div>
                 </div>
 
 
                 <div class="mb-3">
-                  <label class="form-label">Booking Summary</label>
-                  <div class="d-flex align-items-center">
-                    <div class="input-group me-2" style="max-width: 150px;">
+                  <label class="form-label">Booking summary</label>
+                  <div class="d-flex align-items-center flex-wrap gap-2">
+                    <div class="input-group" style="max-width: 150px;">
                       <span class="input-group-text">£</span>
                       <input type="text" id="charges_per_day" class="form-control" value="{{ $fleet->price_per_day }}" readonly>
                     </div>
-                    <span class="mx-2 fw-bold">×</span>
-                    <div class="input-group me-2" style="max-width: 100px;">
+                    <span class="fw-bold">×</span>
+                    <div class="input-group" style="max-width: 110px;">
                       <input type="text" id="days" class="form-control" value="0" readonly>
                       <span class="input-group-text">Days</span>
                     </div>
-                    <span class="mx-2 fw-bold">=</span>
+                    <span class="fw-bold">=</span>
                     <div class="input-group" style="max-width: 180px;">
                       <span class="input-group-text">£</span>
                       <input type="text" id="total_cost" class="form-control" value="0" readonly>
@@ -228,29 +283,29 @@
 
 
                 <div class="text-end">
-                  <button type="button" class="btn-black-sm btn-next-step" onclick="openConfirmBookingModal()">Next Step</button>
+                  <button type="button" class="btn btn-next-step btn-vehicle-modal-next" onclick="openConfirmBookingModal()">Next step</button>
                 </div>
 
             </form>
 
                 @elseif($validation && $validation->status === 'pending')
 
-                    <div class="text-center">
-                        <p class="mb-4">Please Wait! Your Verification is in Process.</p>
+                    <div class="text-center py-3">
+                        <p class="mb-0">Please wait — your verification is in progress.</p>
                     </div>
 
                 @else
 
-                    <div class="text-center">
-                        <p class="mb-4">Your account is not verified. Please complete the verification process to book a vehicle.</p>
+                    <div class="text-center py-3">
+                        <p class="mb-4">Your account is not verified. Complete verification to book a vehicle.</p>
                     </div>
                 @endif
 
             @else
 
-            <div class="text-center">
-                <p class="mb-4">Please login to book this vehicle.</p>
-                <a href="{{ route('login') }}" class="btn-blue">Login</a>
+            <div class="text-center py-3">
+                <p class="mb-4">Please log in to book this vehicle.</p>
+                <a href="{{ route('login') }}" class="btn btn-vehicle-book">Login</a>
             </div>
         @endif
       </div>
@@ -260,26 +315,26 @@
 </div>
 
 
-<div class="modal fade" id="confirmBookingModal" tabindex="-1" aria-labelledby="confirmBookingModalLabel" aria-hidden="true">
+<div class="modal fade vehicle-booking-modal" id="confirmBookingModal" tabindex="-1" aria-labelledby="confirmBookingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-content vehicle-modal-content">
 
-    <div class="modal-header d-flex align-items-center justify-content-between">
+    <div class="modal-header border-0 pb-0">
       <div class="d-flex align-items-center">
-        <a type="button" class="go-back-modal-btn me-2" onclick="goBackToBooking()">
+        <button type="button" class="go-back-modal-btn me-2 btn btn-link p-0 text-decoration-none" onclick="goBackToBooking()" aria-label="Back">
           <i class="fa fa-arrow-left"></i>
-        </a>
-        <h5 class="modal-title mb-0" id="confirmBookingModalLabel">Confirm Booking</h5>
+        </button>
+        <h5 class="modal-title vehicle-modal-title mb-0" id="confirmBookingModalLabel">Confirm booking</h5>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
 
 
-      <div class="modal-body text-center">
+      <div class="modal-body text-center pt-2">
       <p class="mb-2">Your payment due date is <strong><span id="due-date-display">[Not Selected]</span></strong></p>
 
         <div class="d-flex justify-content-center gap-3">
-          <button type="button" class="btn-black-sm" onclick="openPayLaterModal()">Next Step</button>
+          <button type="button" class="btn btn-vehicle-modal-next" onclick="openPayLaterModal()">Next step</button>
         </div>
       </div>
 
@@ -288,26 +343,26 @@
 </div>
 
 
-<div class="modal fade" id="payLaterModal" tabindex="-1" aria-labelledby="payLaterModalLabel" aria-hidden="true">
+<div class="modal fade vehicle-booking-modal" id="payLaterModal" tabindex="-1" aria-labelledby="payLaterModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-content vehicle-modal-content">
 
-    <div class="modal-header d-flex align-items-center justify-content-between">
+    <div class="modal-header border-0 pb-0">
       <div class="d-flex align-items-center">
-        <a type="button" class="go-back-modal-btn me-2" onclick="goBackToSecondModal()"><i class="fa fa-arrow-left"></i></a>
-        <h5 class="modal-title mb-0" id="payLaterModalLabel">Confirm Your Booking</h5>
+        <button type="button" class="go-back-modal-btn me-2 btn btn-link p-0 text-decoration-none" onclick="goBackToSecondModal()" aria-label="Back"><i class="fa fa-arrow-left"></i></button>
+        <h5 class="modal-title vehicle-modal-title mb-0" id="payLaterModalLabel">Confirm your booking</h5>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
 
-      <div class="modal-body">
-        <h5 class="mb-4">Booking Details</h5>
+      <div class="modal-body pt-2">
+        <h5 class="mb-4 vehicle-modal-subtitle">Booking details</h5>
         
-        <table class="table">
+        <table class="table vehicle-modal-table">
           <thead>
             <tr>
-              <th>From Date</th>
-              <th>To Date</th>
+              <th>From date</th>
+              <th>To date</th>
               <th>Price</th>
             </tr>
           </thead>
@@ -321,7 +376,7 @@
         </table>
 
         <div class="text-center">
-          <button type="button" class="btn-black-sm" onclick="confirmPayLaterBooking()">Confirm</button>
+          <button type="button" class="btn btn-vehicle-modal-next" onclick="confirmPayLaterBooking()">Confirm</button>
         </div>
       </div>
 
@@ -346,15 +401,26 @@
     });
 </script>
 <script>
+    document.querySelectorAll('.vehicle-show-thumb').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var src = this.getAttribute('data-src');
+            var main = document.getElementById('vehicle-show-main-image');
+            if (main && src) main.src = src;
+            document.querySelectorAll('.vehicle-show-thumb').forEach(function(b) { b.classList.remove('is-active'); });
+            this.classList.add('is-active');
+        });
+    });
+</script>
+<script>
     const fromDateInput = document.getElementById('from_date');
     const toDateInput = document.getElementById('to_date');
     const nextStepButton = document.querySelector('.btn-next-step');
 
-    fromDateInput.addEventListener('change', function () {
+    if (fromDateInput) fromDateInput.addEventListener('change', function () {
         checkDateAvailability(this.value, 'from');
     });
 
-    toDateInput.addEventListener('change', function () {
+    if (toDateInput) toDateInput.addEventListener('change', function () {
         checkDateAvailability(this.value, 'to');
     });
 
@@ -395,6 +461,7 @@
 }
 
     function toggleNextStepButton() {
+        if (!nextStepButton) return;
         const fromError = document.getElementById('from_date_error').textContent.trim();
         const toError = document.getElementById('to_date_error').textContent.trim();
         if (fromError || toError) {
@@ -415,6 +482,8 @@
         const totalCostInput = document.getElementById('total_cost');
         const daysInput = document.getElementById('days');
         const hiddenTotalInput = document.getElementById('hidden_total_price');
+
+        if (!fromDateInput || !toDateInput || !chargesPerDayInput) return;
 
         const fromDate = new Date(fromDateInput.value);
         const toDate = new Date(toDateInput.value);
@@ -628,8 +697,5 @@
     return !hasError;
   }
 </script>
-
-
-
 
 @endsection
