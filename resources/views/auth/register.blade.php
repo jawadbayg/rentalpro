@@ -54,30 +54,22 @@
                     </div>
 
                     <!-- Password -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                        <input id="password" type="password" 
-                               class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
-                               name="password"  autocomplete="new-password">
-                        @error('password')
-                            <span class="text-danger" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
+                    <x-password-field
+                        id="password"
+                        name="password"
+                        label="Password"
+                        autocomplete="new-password"
+                        input-class="form-control form-control-lg custom-input"
+                    />
 
                     <!-- Confirm Password -->
-                    <div class="mb-3">
-                        <label for="password-confirm" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                        <input id="password-confirm" type="password" 
-                                class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
-                               name="password_confirmation"  autocomplete="new-password">
-                               @error('password')
-                            <span class="text-danger" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
+                    <x-password-field
+                        id="password-confirm"
+                        name="password_confirmation"
+                        label="Confirm Password"
+                        autocomplete="new-password"
+                        input-class="form-control form-control-lg custom-input"
+                    />
                    
                     <!-- Address Field (Initially Hidden) -->
                     <div class="mb-3" id="address-field" style="display: none;">

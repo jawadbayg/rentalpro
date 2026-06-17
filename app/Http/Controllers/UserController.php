@@ -175,6 +175,26 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Profile picture updated successfully!');
     }
 
+    public function updatePassword(Request $request, $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+
+        if (Auth::id() !== $user->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+        ]);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password updated successfully.');
+    }
+
     public function createUserVerification(){
         return view('partials.user_validation');
     }

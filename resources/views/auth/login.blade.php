@@ -41,19 +41,13 @@
                     </div>
 
                     <!-- Password -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label">
-                            {{ __('Password') }} <span class="text-danger">*</span>
-                        </label>
-                        <input id="password" type="password" 
-                        class="form-control form-control-lg custom-input @error('password') is-invalid @enderror" 
-                            name="password"  autocomplete="current-password">
-                        @error('password')
-                            <span class="text-danger" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
+                    <x-password-field
+                        id="password"
+                        name="password"
+                        label="{{ __('Password') }}"
+                        autocomplete="current-password"
+                        input-class="form-control form-control-lg custom-input"
+                    />
 
                     <div class="row align-items-center mb-3">
                         <div class="col-md-6">

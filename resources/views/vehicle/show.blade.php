@@ -9,7 +9,7 @@
         : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200&q=80';
     $priceRaw = $fleet->price_per_day;
     $priceDisplay = $priceRaw !== null && (float) $priceRaw > 0
-        ? '£' . number_format((float) $priceRaw, 0)
+        ? format_pkr($priceRaw, 0)
         : 'Ask for quote';
     $providerAddress = $fleet->user->fpDetail?->address ?? '—';
 @endphp
@@ -153,14 +153,9 @@
                             <img src="{{ asset('default-user.png') }}" alt="" class="vehicle-provider-card__avatar">
                         @endif
                         <p class="vehicle-provider-card__name mb-1">{{ $fleet->user->name }}</p>
-                        <p class="vehicle-provider-card__detail mb-1"><i class="fas fa-envelope me-2 opacity-75"></i>{{ $fleet->user->email }}</p>
                         <p class="vehicle-provider-card__detail mb-0"><i class="fas fa-location-dot me-2 opacity-75"></i>{{ $providerAddress }}</p>
                     </div>
-                    @if ($already_booked == true)
-                        <button type="button" class="btn vehicle-show-btn-disabled w-100" disabled aria-disabled="true">Already booked</button>
-                    @else
-                        <button type="button" class="btn btn-vehicle-book w-100" data-bs-toggle="modal" data-bs-target="#bookingModal">Book now</button>
-                    @endif
+                    <button type="button" class="btn btn-vehicle-book w-100" data-bs-toggle="modal" data-bs-target="#bookingModal">Book now</button>
                 </aside>
             </div>
         </div>
@@ -181,7 +176,7 @@
                             : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80';
                         $itemPrice = $item->price_per_day;
                         $itemPriceLabel = $itemPrice !== null && (float) $itemPrice > 0
-                            ? '£' . number_format((float) $itemPrice, 0)
+                            ? format_pkr($itemPrice, 0)
                             : 'Ask for quote';
                         $itemVt = strtolower($item->vehicle_type ?? '');
                         $itemTrans = str_contains($itemVt, 'manual') ? 'Manual' : 'Automatic';
@@ -247,6 +242,23 @@
                 <input type="hidden" name="payment_status" value="pending">
                 <input type="hidden" name="total_price" id="hidden_total_price">
 
+                @if($bookedRanges->isNotEmpty())
+                    <div class="vehicle-booked-dates-notice mb-3">
+                        <p class="small text-muted mb-2">
+                            <i class="fas fa-calendar-xmark me-1"></i>Some dates are already booked:
+                        </p>
+                        <ul class="list-unstyled small text-muted mb-0">
+                            @foreach($bookedRanges as $range)
+                                <li>
+                                    {{ \Carbon\Carbon::parse($range['from'])->format('d M Y') }}
+                                    –
+                                    {{ \Carbon\Carbon::parse($range['to'])->format('d M Y') }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="mb-3">
                   <label for="from_date" class="form-label">From date <span class="text-danger">*</span></label>
                   <input type="text" id="from_date" name="from_date" class="form-control datepicker vehicle-modal-input" required autocomplete="off">
@@ -265,7 +277,7 @@
                   <label class="form-label">Booking summary</label>
                   <div class="d-flex align-items-center flex-wrap gap-2">
                     <div class="input-group" style="max-width: 150px;">
-                      <span class="input-group-text">£</span>
+                      <span class="input-group-text">Rs.</span>
                       <input type="text" id="charges_per_day" class="form-control" value="{{ $fleet->price_per_day }}" readonly>
                     </div>
                     <span class="fw-bold">×</span>
@@ -275,7 +287,7 @@
                     </div>
                     <span class="fw-bold">=</span>
                     <div class="input-group" style="max-width: 180px;">
-                      <span class="input-group-text">£</span>
+                      <span class="input-group-text">Rs.</span>
                       <input type="text" id="total_cost" class="form-control" value="0" readonly>
                     </div>
                   </div>
@@ -390,13 +402,35 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
+    const bookedRanges = @json($bookedRanges);
+
+    function formatLocalDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function isDateBooked(date) {
+        const value = formatLocalDate(date);
+        return bookedRanges.some(function(range) {
+            return value >= range.from && value <= range.to;
+        });
+    }
+
     flatpickr(".datepicker", {
         altInput: true,
         altFormat: "F j, Y",
         dateFormat: "Y-m-d",
         minDate: "today",
-        onChange: function(selectedDates, dateStr, instance) {
+        disable: [
+            function(date) {
+                return isDateBooked(date);
+            }
+        ],
+        onChange: function() {
             calculateTotal();
+            checkDateAvailability();
         }
     });
 </script>
@@ -416,49 +450,55 @@
     const toDateInput = document.getElementById('to_date');
     const nextStepButton = document.querySelector('.btn-next-step');
 
-    if (fromDateInput) fromDateInput.addEventListener('change', function () {
-        checkDateAvailability(this.value, 'from');
-    });
+    function checkDateAvailability() {
+        if (!fromDateInput || !toDateInput) return;
 
-    if (toDateInput) toDateInput.addEventListener('change', function () {
-        checkDateAvailability(this.value, 'to');
-    });
+        const urlParts = window.location.pathname.split('/');
+        const vehicleId = urlParts[urlParts.length - 1];
 
-    function checkDateAvailability(date, type) {
-    const urlParts = window.location.pathname.split('/');
-    const vehicleId = urlParts[urlParts.length - 1]; 
+        const payload = {
+            id: vehicleId,
+            from_date: fromDateInput.value,
+            to_date: toDateInput.value
+        };
 
-    const payload = {
-        id: vehicleId, 
-        from_date: fromDateInput.value,
-        to_date: toDateInput.value
-    };
-
-    fetch('/check-date', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        const errorDivId = type === 'from' ? 'from_date_error' : 'to_date_error';
-        const errorDiv = document.getElementById(errorDivId);
-
-        if (!data.available) {
-            errorDiv.textContent = data.message;
-        } else {
-            errorDiv.textContent = '';
+        if (!payload.from_date && !payload.to_date) {
+            return;
         }
 
-        toggleNextStepButton();
-    })
-    .catch(error => {
-        console.error('Error checking date availability:', error);
-    });
-}
+        fetch('/check-date', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const fromError = document.getElementById('from_date_error');
+            const toError = document.getElementById('to_date_error');
+
+            if (!data.available) {
+                if (payload.from_date && payload.to_date) {
+                    toError.textContent = data.message;
+                    fromError.textContent = '';
+                } else if (payload.from_date) {
+                    fromError.textContent = data.message;
+                } else {
+                    toError.textContent = data.message;
+                }
+            } else {
+                fromError.textContent = '';
+                toError.textContent = '';
+            }
+
+            toggleNextStepButton();
+        })
+        .catch(error => {
+            console.error('Error checking date availability:', error);
+        });
+    }
 
     function toggleNextStepButton() {
         if (!nextStepButton) return;
@@ -572,7 +612,7 @@
 
     document.getElementById('pay_later_from_date').textContent = fromDate;
     document.getElementById('pay_later_to_date').textContent = toDate;
-    document.getElementById('pay_later_price').textContent = `£${totalPrice}`;
+    document.getElementById('pay_later_price').textContent = `Rs. ${totalPrice}`;
 
     let confirmModalEl = document.getElementById('confirmBookingModal');
     let confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
@@ -622,11 +662,12 @@
             }
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(data.message || 'Network response was not ok');
         }
 
-        const data = await response.json();
         await Swal.fire({
             icon: 'success',
             title: 'Booking Confirmed!',
@@ -640,7 +681,7 @@
         Swal.fire({
             icon: 'error',
             title: 'Something went wrong',
-            text: 'Your booking could not be processed. Please try again later.',
+            text: error.message || 'Your booking could not be processed. Please try again later.',
         });
         console.error('Booking error:', error);
         } finally {
@@ -678,6 +719,14 @@
         document.getElementById('to_date_error').textContent = 'The "To Date" must be after the "From Date".';
         hasError = true;
       } else {
+        const overlapsBookedRange = bookedRanges.some(function(range) {
+          return fromDate <= range.to && toDate >= range.from;
+        });
+
+        if (overlapsBookedRange) {
+          document.getElementById('to_date_error').textContent = 'This vehicle is already booked for part of the selected dates. Please choose different dates.';
+          hasError = true;
+        } else {
         const timeDiff = toDateObj - fromDateObj;
         const days = timeDiff / (1000 * 3600 * 24);
         document.getElementById('days').value = days;
@@ -690,6 +739,7 @@
         if (totalCost <= 0) {
           document.getElementById('to_date_error').textContent = 'Please select valid dates to calculate cost.';
           hasError = true;
+        }
         }
       }
     }

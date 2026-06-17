@@ -160,19 +160,166 @@ body{
 /* end here */
  
 /* FP side fleet index css  */
-.table-card{
-    font-family: 'Poppins',sans-serif;
-    background-color: rgb(255, 255, 255);
-    padding: 25px;
-    border-radius: 20px;
+.fleet-index-page {
     width: 100%;
-
+    max-width: 100%;
+    font-family: 'DM Sans', 'Poppins', sans-serif;
 }
-.table-image {
-    width: 120px;  /* Adjust as per your requirement */
-    height: 50px;
-    object-fit: cover;  /* Ensures the image aspect ratio is maintained */
-    border-radius: 10px;  /* Round the corners */
+
+.fleet-index-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.fleet-index-page__eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #6b7f88;
+    margin-bottom: 0.25rem;
+}
+
+.fleet-index-page__title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+    color: #0b1f26;
+    margin: 0;
+}
+
+.fleet-index-page__alert {
+    margin-bottom: 1rem;
+}
+
+.fleet-table-card,
+.table-card {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid rgba(1, 35, 46, 0.08);
+    box-shadow: 0 8px 28px rgba(1, 35, 46, 0.06);
+}
+
+.fleet-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.fleet-table {
+    margin-bottom: 0;
+    min-width: 960px;
+}
+
+.fleet-table thead th {
+    background: #01232e;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: none;
+    padding: 0.85rem 0.9rem;
+    white-space: nowrap;
+}
+
+.fleet-table tbody td {
+    vertical-align: middle;
+    padding: 0.85rem 0.9rem;
+    border-color: rgba(1, 35, 46, 0.08);
+    color: #2c3e46;
+    font-size: 0.92rem;
+}
+
+.fleet-table tbody tr:hover {
+    background: rgba(1, 35, 46, 0.03);
+}
+
+.fleet-table__actions-col {
+    min-width: 180px;
+}
+
+.fleet-table__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.fleet-status-badge,
+.fleet-rental-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fleet-status-badge--active {
+    background: rgba(25, 135, 84, 0.12);
+    color: #146c43;
+}
+
+.fleet-status-badge--inactive {
+    background: rgba(220, 53, 69, 0.12);
+    color: #b02a37;
+}
+
+.fleet-status-badge--maintenance {
+    background: rgba(255, 193, 7, 0.18);
+    color: #997404;
+}
+
+.fleet-rental-badge {
+    background: rgba(1, 35, 46, 0.08);
+    color: #01232e;
+}
+
+.fleet-index-page .dataTables_wrapper {
+    width: 100%;
+}
+
+.fleet-index-page .dataTables_wrapper .dataTables_filter input,
+.fleet-index-page .dataTables_wrapper .dataTables_length select {
+    border-radius: 10px;
+    border: 1px solid rgba(1, 35, 46, 0.15);
+    padding: 0.35rem 0.65rem;
+}
+
+.fleet-index-page .dataTables_wrapper .dataTables_info,
+.fleet-index-page .dataTables_wrapper .dataTables_paginate {
+    margin-top: 0.85rem;
+    font-size: 0.88rem;
+}
+
+@media (max-width: 991.98px) {
+    .fleet-table-card,
+    .table-card {
+        padding: 1rem;
+    }
+
+    .fleet-index-page__header .btn-blue {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .fleet-index-page .dataTables_wrapper .dataTables_length,
+    .fleet-index-page .dataTables_wrapper .dataTables_filter {
+        float: none;
+        text-align: left;
+        margin-bottom: 0.75rem;
+    }
 }
 .create-fleet{
     font-family: 'Poppins',sans-serif;
@@ -1509,29 +1656,109 @@ html {
 }
 
 /* --- Admin / FP layout: sidebar & dashboard --- */
-.content-area:not(.content-area-guest) {
-  margin-left: 260px;
-  padding: 1.25rem 1.5rem 2rem;
-  width: calc(100% - 260px);
-  min-height: calc(100vh - 56px);
-  background: linear-gradient(165deg, #eef1f5 0%, #f4f6f9 45%, #eef2f6 100%);
+:root {
+  --admin-sidebar-width: 260px;
+  --admin-topbar-height: 56px;
 }
 
-@media (max-width: 768px) {
-  .content-area:not(.content-area-guest) {
-    margin-left: 0;
-    width: 100%;
-  }
+.admin-shell {
+  min-height: 100vh;
+}
 
-  .sidebar-app {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1040;
-    height: 100vh;
-    max-height: 100vh;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
-  }
+.admin-shell__main {
+  margin-left: var(--admin-sidebar-width);
+  width: calc(100% - var(--admin-sidebar-width));
+  min-height: 100vh;
+}
+
+.admin-shell__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(1, 25, 35, 0.45);
+  z-index: 1035;
+}
+
+.admin-topbar {
+  position: fixed;
+  top: 0;
+  left: var(--admin-sidebar-width);
+  right: 0;
+  height: var(--admin-topbar-height);
+  z-index: 1020;
+  overflow: visible;
+  background: linear-gradient(135deg, #01232e 0%, #0a3d4f 50%, #062a36 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-topbar__inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.25rem 0 1.5rem;
+  overflow: visible;
+}
+
+.admin-topbar__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.admin-topbar__title {
+  flex: 1;
+  font-family: 'Outfit', 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.01em;
+}
+
+.admin-topbar__actions {
+  margin-left: auto;
+  position: relative;
+}
+
+.admin-topbar__actions .dropdown-menu {
+  z-index: 1050;
+  margin-top: 0.5rem;
+}
+
+.admin-topbar__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  background: transparent;
+  color: #fff !important;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.5rem;
+  text-decoration: none;
+}
+
+.admin-topbar__user i {
+  font-size: 1.15rem;
+  opacity: 0.9;
+}
+
+.admin-topbar__user::after {
+  margin-left: 0.35rem;
+}
+
+.content-area:not(.content-area-guest) {
+  margin-left: 0;
+  padding: calc(var(--admin-topbar-height) + 1.25rem) 1.5rem 2rem;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(165deg, #eef1f5 0%, #f4f6f9 45%, #eef2f6 100%);
 }
 
 .sidebar.sidebar-app {
@@ -1539,12 +1766,41 @@ html {
   position: fixed;
   top: 0;
   left: 0;
-  width: 260px;
+  width: var(--admin-sidebar-width);
   padding: 0;
   overflow-y: auto;
   background: linear-gradient(180deg, #011923 0%, #01232e 55%, #021a22 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
-  z-index: 1025;
+  z-index: 1040;
+}
+
+@media (max-width: 991.98px) {
+  .admin-shell__main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .admin-topbar {
+    left: 0;
+  }
+
+  .admin-topbar__toggle {
+    display: inline-flex;
+  }
+
+  .sidebar.sidebar-app {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .sidebar.sidebar-app.is-open {
+    transform: translateX(0);
+  }
+
+  body.admin-sidebar-open {
+    overflow: hidden;
+  }
 }
 
 .sidebar-app__brand {
@@ -1795,4 +2051,35 @@ html {
 
 .admin-chart-card__body--line {
   height: 300px;
+}
+
+/* Password visibility toggle */
+.password-field {
+  position: relative;
+}
+
+.password-field .form-control,
+.password-field .custom-input {
+  padding-right: 2.75rem;
+}
+
+.password-field__toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7f88;
+  padding: 0.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.password-field__toggle:hover {
+  color: #01232e;
+}
+
+.password-field__toggle.is-visible i::before {
+  content: "\f070";
 }

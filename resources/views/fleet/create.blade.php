@@ -25,7 +25,27 @@
     <h2>Add New Vehicle</h2>
     <form action="{{ route('fleet.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+
+        @if ($isAdmin)
+            <div class="mb-3">
+                <label for="user_id" class="form-label">Select Fleet Provider <span class="text-danger">*</span></label>
+                <select class="form-control @error('user_id') is-invalid @enderror" id="user_id" name="user_id" required>
+                    <option value="">Select Fleet Provider</option>
+                    @forelse ($fleetProviders as $provider)
+                        <option value="{{ $provider->id }}" {{ (string) old('user_id') === (string) $provider->id ? 'selected' : '' }}>
+                            {{ $provider->name }} ({{ $provider->email }})
+                        </option>
+                    @empty
+                        <option value="" disabled>No fleet providers found</option>
+                    @endforelse
+                </select>
+                @error('user_id')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+        @else
+            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+        @endif
 
         <div class="row mb-3">
             <div class="col-md-6">
@@ -163,7 +183,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="charges_per_day" class="form-label">Charges per day <span class="text-danger">*</span></label>
+            <label for="charges_per_day" class="form-label">Charges per day (Rs.) <span class="text-danger">*</span></label>
             <input type="number" class="form-control @error('charges_per_day') is-invalid @enderror" 
                    id="charges_per_day" name="charges_per_day" value="{{ old('charges_per_day') }}">
             @error('charges_per_day')

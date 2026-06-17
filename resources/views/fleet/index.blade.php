@@ -1,110 +1,137 @@
 @extends('layouts.app')
 
 @section('content')
-   
-
-        <a href="{{ route('fleet.create') }}" class="btn-blue mb-3">
-           + Add Vehicle
+<div class="fleet-index-page">
+    <div class="fleet-index-page__header">
+        <div>
+            <p class="fleet-index-page__eyebrow">Fleet management</p>
+            <h2 class="fleet-index-page__title">Manage Fleet</h2>
+        </div>
+        <a href="{{ route('fleet.create') }}" class="btn-blue">
+            <i class="fas fa-plus"></i> Add Vehicle
         </a>
-        <div class="table-card">
-            <table id="fleetTable" class="table table-bordered">
+    </div>
+
+    @session('success')
+        <div class="alert alert-success fleet-index-page__alert" role="alert">
+            {{ $value }}
+        </div>
+    @endsession
+
+    <div class="fleet-table-card">
+        <div class="fleet-table-wrap">
+            <table id="fleetTable" class="table fleet-table w-100">
                 <thead>
                     <tr>
-                        @if($isAdmin) <!-- Add the Fleet Provider column if the user is an Admin -->
-                            <th>Fleet Provider</th>
+                        @if ($isAdmin)
+                            <th>Provider</th>
                         @endif
                         <th>Vehicle</th>
-                        <th>Vehicle Name</th>
-                        <th>Owner Name</th>
-                        <th>Vehicle Type</th>
-                        <th>Manufacturing Year</th>
+                        <th>Owner</th>
+                        <th>Type</th>
+                        <th>Plate</th>
+                        <th>Year</th>
                         <th>Status</th>
-                        <th>Rental Status</th>
-                        <th>Actions</th>
+                        <th class="fleet-table__actions-col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($fleets as $fleet)
+                    @forelse ($fleets as $fleet)
                         <tr>
-                            @if($isAdmin)
-                                <td>{{ $fleet->user->name }}</td>
+                            @if ($isAdmin)
+                                <td data-label="Provider">{{ $fleet->user->name ?? '—' }}</td>
                             @endif
-                            <td>
-                                @if($fleet->images->count() > 0)
-                                    <img src="{{ asset('storage/' . $fleet->images->first()->image) }}" alt="Vehicle Image" class="table-image">
+                            <td data-label="Vehicle">{{ $fleet->vehicle_name }}</td>
+                            <td data-label="Owner">{{ $fleet->vehicle_owner_name }}</td>
+                            <td data-label="Type">{{ $fleet->vehicle_type }}</td>
+                            <td data-label="Plate">{{ $fleet->license_plate }}</td>
+                            <td data-label="Year">{{ $fleet->manufacturing_year }}</td>
+                            <td data-label="Status">
+                                @if ($fleet->status === 'active')
+                                    <span class="fleet-status-badge fleet-status-badge--active">Active</span>
+                                @elseif ($fleet->status === 'inactive')
+                                    <span class="fleet-status-badge fleet-status-badge--inactive">Inactive</span>
+                                @elseif ($fleet->status === 'under_maintenance')
+                                    <span class="fleet-status-badge fleet-status-badge--maintenance">Maintenance</span>
                                 @else
-                                    No Image
+                                    <span class="fleet-status-badge">{{ ucfirst($fleet->status) }}</span>
                                 @endif
                             </td>
-                            <td>{{ $fleet->vehicle_name }}</td>
-                            <td>{{ $fleet->vehicle_owner_name }}</td>
-                            <td>{{ $fleet->vehicle_type }}</td>
-                            <td>{{ $fleet->manufacturing_year }}</td>
-                            <td style="color: 
-                                @if($fleet->status == 'active') 
-                                    green;
-                                @elseif($fleet->status == 'inactive') 
-                                    red;
-                                @elseif($fleet->status == 'under_maintenance') 
-                                    orange;
-                                @else 
-                                    black; 
-                                @endif">
-                                @if($fleet->status == 'active')
-                                    Active
-                                @elseif($fleet->status == 'inactive')
-                                    Inactive
-                                @elseif($fleet->status == 'under_maintenance')
-                                    Under Maintenance
-                                @else
-                                    {{ ucfirst($fleet->status) }}
-                                @endif
-                            </td>
-                            <td>{{ $fleet->rental_status }}</td>
-                            <td>
-                            <a href="{{ route('fleet.edit', $fleet->id) }}" class="btn btn-warning btn-sm">Edit</a>     
-                            <!-- <button 
-                                class="btn btn-danger btn-sm delete-fleet-btn" 
-                                data-id="{{ $fleet->id }}" 
-                                data-token="{{ csrf_token() }}">
-                                Delete
-                            </button> -->
-                           
-
-
-
+                            <td data-label="Actions">
+                                <div class="fleet-table__actions">
+                                    <a href="{{ route('fleet.edit', $fleet->id) }}" class="btn-black-sm">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <button
+                                        type="button"
+                                        class="btn-black-sm fleet-delete-btn"
+                                        data-id="{{ $fleet->id }}"
+                                        data-name="{{ $fleet->vehicle_name }}"
+                                        data-token="{{ csrf_token() }}">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4 text-muted">
+                                No vehicles found. Add your first vehicle to get started.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
-        <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function() {
-        $('#fleetTable').DataTable(); 
+    $(document).ready(function () {
+        if ($('#fleetTable tbody tr td[colspan]').length) {
+            return;
+        }
+
+        $('#fleetTable').DataTable({
+            responsive: true,
+            scrollX: true,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+            order: [],
+            language: {
+                search: 'Search vehicles:',
+                lengthMenu: 'Show _MENU_ vehicles',
+                info: 'Showing _START_ to _END_ of _TOTAL_ vehicles',
+                infoEmpty: 'No vehicles available',
+                zeroRecords: 'No matching vehicles found',
+            },
+            columnDefs: [
+                { orderable: false, targets: -1 }
+            ]
+        });
     });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.delete-fleet-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const fleetId = this.dataset.id;
-            const token = this.dataset.token;
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "This fleet will be permanently deleted.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.fleet-delete-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const fleetId = this.dataset.id;
+                const fleetName = this.dataset.name;
+                const token = this.dataset.token;
+
+                Swal.fire({
+                    title: 'Delete vehicle?',
+                    text: `"${fleetName}" will be permanently removed.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#01232e',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it'
+                }).then(function (result) {
+                    if (!result.isConfirmed) {
+                        return;
+                    }
+
                     fetch(`/fleet/delete/${fleetId}`, {
                         method: 'POST',
                         headers: {
@@ -113,27 +140,25 @@ document.addEventListener('DOMContentLoaded', function () {
                             'Accept': 'application/json',
                         },
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            Swal.fire('Deleted!', data.message, 'success').then(() => {
-                                location.reload(); 
-                            });
-                        } else {
-                            Swal.fire('Error!', 'Something went wrong.', 'error');
-                        }
+                    .then(function (response) {
+                        return response.json().then(function (data) {
+                            if (!response.ok) {
+                                throw new Error(data.message || 'Request failed.');
+                            }
+                            return data;
+                        });
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire('Error!', 'Request failed.', 'error');
+                    .then(function (data) {
+                        Swal.fire('Deleted!', data.message, 'success').then(function () {
+                            location.reload();
+                        });
+                    })
+                    .catch(function (error) {
+                        Swal.fire('Error!', error.message || 'Request failed.', 'error');
                     });
-                }
+                });
             });
         });
     });
-});
 </script>
-
-
-
 @endsection

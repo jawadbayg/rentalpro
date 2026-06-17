@@ -9,7 +9,7 @@
                 <li><strong>Booking ID:</strong> {{ $booking->booking_no }}</li>
                 <li><strong>Fleet Provider:</strong> {{ $booking->fp->name }}</li>
                 <li><strong>Booking Date:</strong> {{ $booking->created_at->format('M d, Y') }}</li>
-                <li><strong>Total Price:</strong> ${{ number_format($booking->total_price, 2) }}</li>
+                <li><strong>Total Price:</strong> {{ format_pkr($booking->total_price, 2) }}</li>
             </ul>
         </div>
         <form id="payment-form" method="POST">

@@ -10,7 +10,7 @@ use App\Mail\UserValidationApproved;
 class VerificationController extends Controller
 {
     public function index(){
-        $requests = UserValidation::with('user')->get(); 
+        $requests = UserValidation::with(['user.profile', 'user.roles'])->latest()->get();
         return view('verification.index',compact('requests'));
     }
 

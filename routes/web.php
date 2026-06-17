@@ -10,6 +10,7 @@ use App\Http\Controllers\FleetController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\FleetProviderController;
 use App\Http\Controllers\InvoiceController;
 use Illuminate\Http\Request;
 use App\Models\Booking;
@@ -18,8 +19,16 @@ Route::get('/', [LandingPageController::class, 'getFleet']);
 Route::get('/vehicle/{id}', [LandingPageController::class, 'show'])->name('vehicle.show');
   
 Auth::routes();
-  
+
+Route::get('/admin/dashboard', [HomeController::class, 'adminDashboard'])
+    ->middleware(['auth', 'role:Admin'])
+    ->name('admin.dashboard');
+
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::middleware(['auth', 'role:Admin'])->prefix('admin')->group(function () {
+    Route::resource('fleet-providers', FleetProviderController::class)->except(['show']);
+});
 
   
 Route::group(['middleware' => ['auth']], function() {
@@ -30,6 +39,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/profile/settings/{id}', [UserController::class, 'profilePage'])->name('profile.settings');
 
     Route::post('/profile/upload/{id}', [UserController::class, 'uploadProfilePicture'])->name('profile.upload');
+    Route::put('/profile/password/{id}', [UserController::class, 'updatePassword'])->name('profile.password');
 
     // user verification page and store
     Route::get('/user-verification', [UserController::class, 'createUserVerification'])->name('user.validation');
@@ -51,10 +61,15 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::get('/payments', [BookingController::class, 'paymentHistoryIndex'])->name('payments.index');
 
+    Route::get('checkout/{booking_id}', [BookingController::class, 'showCheckout'])->name('checkout');
+    Route::post('checkout/{booking_id}', [BookingController::class, 'processPayment'])->name('checkout.process');
+    Route::get('checkout/{booking_id}/success', [BookingController::class, 'paymentSuccessPage'])->name('checkout.success');
+    Route::post('/payment-success/{booking_id}', [BookingController::class, 'paymentSuccessChanges'])->name('payment.success');
+
 });
 
-    Route::get('about-us',[UserController::Class,'about_us_index'])->name('about.us.index');
 
+Route::get('about-us',[UserController::Class,'about_us_index'])->name('about.us.index');
 
 Route::prefix('fleet')->name('fleet.')->group(function() {
     Route::get('/', [FleetController::class, 'index'])->name('index');
@@ -62,48 +77,6 @@ Route::prefix('fleet')->name('fleet.')->group(function() {
     Route::post('/', [FleetController::class, 'store'])->name('store');
     Route::get('/{id}/edit', [FleetController::class, 'edit'])->name('edit');
     Route::put('/{id}', [FleetController::class, 'update'])->name('update');
-    // Route::get('/{id}', [FleetController::class, 'show'])->name('show');
     Route::post('/delete/{id}', [FleetController::class, 'destroy'])->name('delete');
-
-
-
 });
 
-// Route::get('/checkout', function (Request $request) {
-
-//     $user = auth()->user();
-
-//     $stripePriceId = 'price_1RKCcZ4gfmenhky10ANUU7Y1';
- 
-//     $quantity = 1;
- 
-//     return $user->checkout([$stripePriceId => $quantity], [
-//         'success_url' => route('checkout-success'),
-//         'cancel_url' => route('checkout-cancel'),
-//     ]);
-// })->name('checkout');
-
-Route::get('checkout/{booking_id}', function ($booking_id) {
-    $user = Auth::user();
-    
-    $booking = Booking::where('id', $booking_id)
-                      ->where('customer_id', $user->id)
-                      ->where('is_cancelled',null)
-                      ->firstOrFail();
-
-
-    $amount = $booking->total_price * 100;
-
-    $intent = $user->pay($amount);
-
-    return view('stripe.checkout', compact('intent', 'booking'));
-})->name('checkout');
- 
-Route::get('/checkout/success',  function(){
-    return 'Success Page';
-})->name('checkout-success');
-Route::get('/checkout/cancel', function(){
-    return 'Cancel Page';
-})->name('checkout-cancel');
-
-Route::post('/payment-success/{booking_id}', [BookingController::class, 'paymentSuccessChanges'])->name('payment.success');

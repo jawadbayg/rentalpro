@@ -17,6 +17,9 @@ class PaymentHistory extends Model
         'customer_id',
         'fp_id',
         'total_price',
+        'payer_name',
+        'payment_method',
+        'reference_no',
     ];
 
     // Relationships (optional, if you have related models)

@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Fleet;
 use App\Models\FleetImage;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule; // Correct import
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class FleetController extends Controller
 {
@@ -15,11 +17,11 @@ class FleetController extends Controller
         
         $isAdmin = Auth::user()->hasRole('Admin');
         if ($isAdmin) {
-            $fleets = Fleet::all(); 
+            $fleets = Fleet::with('user')->latest()->get();
         } else {
-            $fleets = Fleet::where('user_id', Auth::user()->id)->get(); // User can see only their own fleets
+            $fleets = Fleet::where('user_id', Auth::user()->id)->latest()->get();
         }
-        return view('fleet.index',compact('fleets','isAdmin'));
+        return view('fleet.index', compact('fleets', 'isAdmin'));
     }
 
     public function show($id)
@@ -29,11 +31,22 @@ class FleetController extends Controller
 
     public function create()
     {
-        return view('fleet.create');
+        $isAdmin = Auth::user()->hasRole('Admin');
+        $fleetProviders = $isAdmin
+            ? User::role('FP')->orderBy('name')->get(['id', 'name', 'email'])
+            : collect();
+
+        return view('fleet.create', compact('isAdmin', 'fleetProviders'));
     }
 
     public function store(Request $request)
     {
+        $isAdmin = Auth::user()->hasRole('Admin');
+
+        if (! $isAdmin) {
+            $request->merge(['user_id' => Auth::id()]);
+        }
+
         try {
             $request->validate([
                 'user_id' => ['required', 'exists:users,id'],
@@ -72,7 +85,10 @@ class FleetController extends Controller
                 'manufacturing_year.min' => 'Manufacturing year cannot be before 1900.',
                 'manufacturing_year.max' => 'Manufacturing year cannot be in the future.',
 
-                'charges_per_day.required' => 'Charges per day is required', 
+                'charges_per_day.required' => 'Charges per day is required',
+
+                'user_id.required' => 'Please select a fleet provider.',
+                'user_id.exists' => 'The selected fleet provider is invalid.',
 
                 'status.required' => 'Vehicle status is required.',
                 'status.in' => 'Invalid status selected.',
@@ -83,6 +99,14 @@ class FleetController extends Controller
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
+        }
+
+        $fleetProvider = User::findOrFail($request->user_id);
+
+        if (! $fleetProvider->hasRole('FP')) {
+            return back()
+                ->withErrors(['user_id' => 'Please select a valid fleet provider.'])
+                ->withInput();
         }
 
         $fleet = new Fleet();
@@ -188,10 +212,19 @@ public function update(Request $request, $id)
 
     public function destroy($id)
     {
-        $fleet = Fleet::findOrFail($id);
+        $fleet = Fleet::with('images')->findOrFail($id);
+
+        if (! Auth::user()->hasRole('Admin') && $fleet->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        foreach ($fleet->images as $image) {
+            Storage::disk('public')->delete($image->image);
+        }
+
         $fleet->delete();
 
-        return response()->json(['message' => 'Fleet deleted successfully.']);
+        return response()->json(['message' => 'Vehicle deleted successfully.']);
     }
 
 

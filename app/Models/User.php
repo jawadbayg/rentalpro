@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->hasOne(FpDetail::class); 
     }
 
+    public function fleet()
+    {
+        return $this->hasMany(Fleet::class);
+    }
+
     public function customerDetails()
     {
         return $this->hasMany(CustomerDetail::class);

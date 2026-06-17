@@ -17,7 +17,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home'; // Default fallback
+    protected $redirectTo = '/admin/dashboard';
 
     /**
      * Create a new controller instance.
@@ -62,10 +62,12 @@ class LoginController extends Controller
     }
     protected function authenticated($request, $user)
     {
+        if ($user->hasRole('Admin')) {
+            return redirect()->route('admin.dashboard');
+        }
+
         if ($user->hasRole('User')) {
             return redirect('/');
-        } elseif ($user->hasRole('Admin')) {
-            return redirect('/home'); 
         }
 
         return redirect('/home');

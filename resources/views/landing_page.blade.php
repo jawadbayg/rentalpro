@@ -64,7 +64,7 @@
                             : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80';
                         $price = $fleet->price_per_day;
                         $priceLabel = $price !== null && (float) $price > 0
-                            ? '£' . number_format((float) $price, 0)
+                            ? format_pkr($price, 0)
                             : 'Ask for quote';
                         $seats = $fleet->no_of_seats;
                         $fuel = $fleet->fuel_type ?: '—';

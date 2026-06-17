@@ -119,7 +119,7 @@
                         callbacks: {
                             label: function (context) {
                                 const v = context.raw !== undefined ? context.raw : context.parsed;
-                                return ' ' + context.label + ': £' + Number(v).toLocaleString();
+                                return ' ' + context.label + ': Rs. ' + Number(v).toLocaleString();
                             }
                         }
                     }
@@ -136,7 +136,7 @@
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [{
-                    label: 'Revenue (£)',
+                    label: 'Revenue (Rs.)',
                     data: @json($revenueByMonth ?? array_fill(0, 12, 0)),
                     fill: true,
                     backgroundColor: 'rgba(1, 35, 46, 0.12)',

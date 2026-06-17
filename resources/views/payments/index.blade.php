@@ -14,7 +14,9 @@
                 @if (Auth::user()->hasRole('Admin'))
                 <th>Fleet Provider</th>
                 @endif
+                <th>Payment Method</th>
                 <th>Total Amount Paid</th>
+                <th>Received Payment</th>
                 <th>Payment Time</th>
             </tr>
         </thead>
@@ -28,12 +30,20 @@
                     @if (Auth::user()->hasRole('Admin'))
                     <td>{{ $payment->fleetProvider->name}}</td>
                     @endif
-                    <td>£{{ number_format($payment->total_price ) }}</td>
+                    <td>{{ $payment->payment_method === 'card' ? 'Card' : ucwords(str_replace('_', ' ', $payment->payment_method ?? 'N/A')) }}</td>
+                    <td>{{ format_pkr($payment->total_price) }}</td>
+                    <td>
+                        @if (Auth::user()->hasRole('Admin'))
+                            {{ format_pkr($payment->booking->fee_amount ?? round($payment->total_price * 0.20)) }}
+                        @else
+                            {{ format_pkr($payment->booking->fp_amount ?? round($payment->total_price * 0.80)) }}
+                        @endif
+                    </td>
                     <td>{{ $payment->created_at->format('d M Y, h:i A') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">No payments found.</td>
+                    <td colspan="{{ Auth::user()->hasRole('Admin') ? 8 : 7 }}" class="text-center">No payments found.</td>
                 </tr>
             @endforelse
         </tbody>

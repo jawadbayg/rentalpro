@@ -111,13 +111,13 @@
                 <td>{{ $invoice->fleet->license_plate }}</td>
                 <td>{{ $invoice->booking->from_date }}</td>
                 <td>{{ $invoice->booking->to_date }}</td>
-                <td>£{{ $invoice->booking->total_price }}</td>
+                <td>{{ format_pkr($invoice->booking->total_price) }}</td>
                 @if(Auth::user()->hasRole('Admin') || (Auth::user()->hasRole('FP')))  
                     <td>20</td>
-                    <td>£{{ number_format($invoice->booking->total_price * 0.80, 2) }}</td>
+                    <td>{{ format_pkr($invoice->booking->total_price * 0.80, 2) }}</td>
                 @endif
                 @if(Auth::user()->hasRole('Admin'))
-                    <td>£{{ number_format($invoice->booking->total_price * 0.20, 2) }}</td>
+                    <td>{{ format_pkr($invoice->booking->total_price * 0.20, 2) }}</td>
                 @endif
             </tr>
         </tbody>
