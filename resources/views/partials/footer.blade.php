@@ -25,9 +25,9 @@
             <div class="col-6 col-md-3 col-lg-3">
                 <h4 class="landing-footer__heading">Contact</h4>
                 <ul class="landing-footer__list landing-footer__contact">
-                    <li><i class="fas fa-phone me-2 opacity-75"></i> +44 20 7946 0958</li>
+                    <li><i class="fas fa-phone me-2 opacity-75"></i> 03202629191</li>
                     <li><i class="fas fa-envelope me-2 opacity-75"></i> hello@rentalpro.example</li>
-                    <li><i class="fas fa-location-dot me-2 opacity-75"></i> London, United Kingdom</li>
+                    <li><i class="fas fa-location-dot me-2 opacity-75"></i> Faisalabad, Pakistan</li>
                 </ul>
             </div>
             <div class="col-lg-3">

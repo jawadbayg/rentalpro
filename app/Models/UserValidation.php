@@ -18,6 +18,7 @@ class UserValidation extends Model
         'license_provider',
         'age',
         'address',
+        'status',
     ];
 
     public function user()

@@ -47,27 +47,25 @@ class FleetController extends Controller
             $request->merge(['user_id' => Auth::id()]);
         }
 
+        $request->merge([
+            'license_plate' => $this->normalizeLicensePlate($request->input('license_plate', '')),
+        ]);
+
         try {
             $request->validate([
                 'user_id' => ['required', 'exists:users,id'],
-                'vehicle_no' => ['required', 'regex:/^[0-9]{4,}$/', 'unique:fleet,vehicle_no'],
                 'vehicle_name' => ['required', 'regex:/^[a-zA-Z0-9\s\-]+$/', 'max:255'],
                 'vehicle_owner_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
                 'registration_date' => ['required', 'date'],
-                'vehicle_type' => ['required', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
-                'license_plate' => ['required', 'regex:/^[A-Z0-9\-]{4,}$/', 'max:255', 'unique:fleet,license_plate'],
-                'manufacturing_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
+                'vehicle_type' => ['required', Rule::in(['Sedan', 'SUV', 'Jeep', 'Other'])],
+                'license_plate' => ['required', 'regex:/^[A-Z0-9]{4,}$/', 'max:255', 'unique:fleet,license_plate'],
                 'status' => ['required', 'in:active,inactive,under_maintenance'],
                 'mileage' => ['nullable', 'integer'],
-                'fuel_type' => ['nullable', 'regex:/^[a-zA-Z\s]+$/', 'max:255'],
+                'fuel_type' => ['nullable', Rule::in(['Petrol', 'Diesel', 'EV'])],
                 'images' => ['nullable', 'array'],
                 'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
                 'charges_per_day' => ['required']
             ], [
-                'vehicle_no.required' => 'Vehicle number is required.',
-                'vehicle_no.regex' => 'Vehicle number must be numeric and at least 4 digits.',
-                'vehicle_no.unique' => 'This vehicle number is already in use.',
-
                 'vehicle_name.required' => 'Vehicle name is required.',
                 'vehicle_name.regex' => 'Vehicle name must contain only letters, numbers, spaces, or dashes.',
 
@@ -75,15 +73,11 @@ class FleetController extends Controller
                 'vehicle_owner_name.regex' => 'Owner name must contain only letters and spaces.',
 
                 'license_plate.required' => 'License plate is required.',
-                'license_plate.regex' => 'License plate format is invalid.',
+                'license_plate.regex' => 'License plate must be at least 4 characters with uppercase letters and numbers only.',
                 'license_plate.unique' => 'This license plate is already in use.',
 
                 'vehicle_type.required' => 'Vehicle type is required.',
-                'vehicle_type.regex' => 'Vehicle type must contain only letters and spaces.',
-
-                'manufacturing_year.required' => 'Manufacturing year is required.',
-                'manufacturing_year.min' => 'Manufacturing year cannot be before 1900.',
-                'manufacturing_year.max' => 'Manufacturing year cannot be in the future.',
+                'vehicle_type.in' => 'Please select a valid vehicle type.',
 
                 'charges_per_day.required' => 'Charges per day is required',
 
@@ -111,13 +105,11 @@ class FleetController extends Controller
 
         $fleet = new Fleet();
         $fleet->user_id = $request->user_id;
-        $fleet->vehicle_no = $request->vehicle_no;
         $fleet->vehicle_name = $request->vehicle_name;
         $fleet->vehicle_owner_name = $request->vehicle_owner_name;
         $fleet->registration_date = $request->registration_date;
         $fleet->vehicle_type = $request->vehicle_type;
         $fleet->license_plate = $request->license_plate;
-        $fleet->manufacturing_year = $request->manufacturing_year;
         $fleet->status = $request->status;
         $fleet->mileage = $request->mileage;
         $fleet->fuel_type = $request->fuel_type;
@@ -151,44 +143,42 @@ class FleetController extends Controller
 
 public function update(Request $request, $id)
 {
+    $request->merge([
+        'license_plate' => $this->normalizeLicensePlate($request->input('license_plate', '')),
+    ]);
+
     try {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'vehicle_no' => [
-                'required',
-                'integer',
-                Rule::unique('fleet')->ignore($id),  
-            ],
             'vehicle_name' => 'required|string|max:255',
             'vehicle_owner_name' => 'required|string|max:255',
             'registration_date' => 'required|date',
-            'vehicle_type' => 'required|string|max:255',
+            'vehicle_type' => ['required', Rule::in(['Sedan', 'SUV', 'Jeep', 'Other'])],
             'license_plate' => [
                 'required',
-                'string',
+                'regex:/^[A-Z0-9]{4,}$/',
                 'max:255',
-                Rule::unique('fleet')->ignore($id), 
+                Rule::unique('fleet')->ignore($id),
             ],
-            'manufacturing_year' => 'required|integer|min:1900|max:' . date('Y'),
             'status' => 'required|in:active,inactive,under_maintenance',
             'mileage' => 'nullable|integer',
-            'fuel_type' => 'nullable|string|max:255',
+            'fuel_type' => ['nullable', Rule::in(['Petrol', 'Diesel', 'EV'])],
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ], [
+            'license_plate.regex' => 'License plate must be at least 4 characters with uppercase letters and numbers only.',
         ]);
     } catch (\Illuminate\Validation\ValidationException $e) {
-        dd($e->errors());
+        return back()->withErrors($e->errors())->withInput();
     }
 
     $fleet = Fleet::findOrFail($id);
-    $fleet->user_id = $request->user_id;  // This will update the user_id
-    $fleet->vehicle_no = $request->vehicle_no;
+    $fleet->user_id = $request->user_id;
     $fleet->vehicle_name = $request->vehicle_name;
     $fleet->vehicle_owner_name = $request->vehicle_owner_name;
     $fleet->registration_date = $request->registration_date;
     $fleet->vehicle_type = $request->vehicle_type;
     $fleet->license_plate = $request->license_plate;
-    $fleet->manufacturing_year = $request->manufacturing_year;
     $fleet->status = $request->status;
     $fleet->mileage = $request->mileage;
     $fleet->fuel_type = $request->fuel_type;
@@ -227,6 +217,8 @@ public function update(Request $request, $id)
         return response()->json(['message' => 'Vehicle deleted successfully.']);
     }
 
-
-    
+    private function normalizeLicensePlate(?string $licensePlate): string
+    {
+        return strtoupper(preg_replace('/\s+/', '', $licensePlate ?? ''));
+    }
 }

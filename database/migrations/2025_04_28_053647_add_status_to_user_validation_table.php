@@ -1,4 +1,4 @@
-2025_04_29_070911_create_bookings_table<?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

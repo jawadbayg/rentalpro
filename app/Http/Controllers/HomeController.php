@@ -9,7 +9,6 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Models\Fleet;
 use App\Models\UserValidation;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -71,18 +70,10 @@ class HomeController extends Controller
             ->sum('total_price');
 
 
-            $monthlyRevenue = Booking::selectRaw('MONTH(created_at) as month, SUM(fp_amount) as total')
-            ->where('fp_id',Auth::user()->id)
-            ->whereNull('is_cancelled')
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->orderBy('month')
-            ->pluck('total', 'month')
-            ->toArray();
-
-            $revenueByMonth = [];
-            for ($i = 1; $i <= 12; $i++) {
-                $revenueByMonth[] = isset($monthlyRevenue[$i]) ? (int) $monthlyRevenue[$i] : 0;
-            }
+            $revenueByMonth = $this->buildMonthlyRevenue(
+                ['fp_id' => Auth::user()->id],
+                'fp_amount'
+            );
 
             return view('home', compact('totalFleets','ToBePaidInvoices','totalBookings', 'totalInvoices','totalPendingAmount','totalPaidAmount','revenueByMonth'));
         }
@@ -108,17 +99,7 @@ class HomeController extends Controller
         $totalPaidAmount = Booking::whereIn('id', $paidBookingIds)->sum('total_price');
 
         $verification_requests = UserValidation::where('status', 'pending')->count();
-        $monthlyRevenue = Booking::selectRaw('MONTH(created_at) as month, SUM(fee_amount) as total')
-            ->whereNull('is_cancelled')
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->orderBy('month')
-            ->pluck('total', 'month')
-            ->toArray();
-
-        $revenueByMonth = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $revenueByMonth[] = isset($monthlyRevenue[$i]) ? (int) $monthlyRevenue[$i] : 0;
-        }
+        $revenueByMonth = $this->buildMonthlyRevenue([], 'fee_amount');
 
         return view('home', compact(
             'totalUsers',
@@ -133,5 +114,26 @@ class HomeController extends Controller
             'verification_requests',
             'revenueByMonth'
         ));
+    }
+
+    private function buildMonthlyRevenue(array $conditions, string $amountColumn): array
+    {
+        $query = Booking::whereNull('is_cancelled');
+
+        foreach ($conditions as $column => $value) {
+            $query->where($column, $value);
+        }
+
+        $monthlyRevenue = $query->get()
+            ->groupBy(fn ($booking) => Carbon::parse($booking->created_at)->month)
+            ->map(fn ($bookings) => (int) $bookings->sum($amountColumn))
+            ->all();
+
+        $revenueByMonth = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $revenueByMonth[] = $monthlyRevenue[$i] ?? 0;
+        }
+
+        return $revenueByMonth;
     }
 }

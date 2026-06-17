@@ -78,6 +78,9 @@ class BookingController extends Controller
             'payment_status' => $booking->payment_status,
             'due_date' => $booking->to_date,
         ]);
+
+        $invoice->load(['customer', 'fp.fpDetail', 'fleet', 'booking']);
+
         $pdf = Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
         $customer = User::find($booking->customer_id);
         if ($customer) {
@@ -191,7 +194,7 @@ class BookingController extends Controller
     {
         $fromDate = $request->input('from_date');
         $toDate = $request->input('to_date');
-        $vehicleId = $request->input('id');
+        $vehicleId = (int) $request->input('id');
 
         if (! $fromDate && ! $toDate) {
             return response()->json([

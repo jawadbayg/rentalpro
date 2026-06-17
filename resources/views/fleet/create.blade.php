@@ -49,25 +49,15 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="vehicle_no" class="form-label">Vehicle Number <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('vehicle_no') is-invalid @enderror" 
-                       id="vehicle_no" name="vehicle_no" value="{{ old('vehicle_no') }}">
-                @error('vehicle_no')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="col-md-6">
                 <label for="license_plate" class="form-label">License Plate <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('license_plate') is-invalid @enderror" 
-                       id="license_plate" name="license_plate" value="{{ old('license_plate') }}">
+                <input type="text" class="form-control fleet-license-plate @error('license_plate') is-invalid @enderror" 
+                       id="license_plate" name="license_plate" value="{{ old('license_plate') }}"
+                       autocomplete="off" autocapitalize="characters" spellcheck="false">
                 @error('license_plate')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-        </div>
 
-        <div class="row mb-3">
             <div class="col-md-6">
                 <label for="vehicle_name" class="form-label">Vehicle Name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('vehicle_name') is-invalid @enderror" 
@@ -76,12 +66,31 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+        </div>
 
+        <div class="row mb-3">
             <div class="col-md-6">
                 <label for="vehicle_type" class="form-label">Vehicle Type <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('vehicle_type') is-invalid @enderror" 
-                       id="vehicle_type" name="vehicle_type" value="{{ old('vehicle_type') }}">
+                <select class="form-control @error('vehicle_type') is-invalid @enderror" id="vehicle_type" name="vehicle_type" required>
+                    <option value="">Select Vehicle type</option>
+                    @foreach (['Sedan', 'SUV', 'Jeep', 'Other'] as $type)
+                        <option value="{{ $type }}" {{ old('vehicle_type') === $type ? 'selected' : '' }}>{{ $type }}</option>
+                    @endforeach
+                </select>
                 @error('vehicle_type')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="fuel_type" class="form-label">Fuel Type</label>
+                <select class="form-control @error('fuel_type') is-invalid @enderror" id="fuel_type" name="fuel_type">
+                    <option value="">Select fuel type</option>
+                    @foreach (['Petrol', 'Diesel', 'EV'] as $fuel)
+                        <option value="{{ $fuel }}" {{ old('fuel_type') === $fuel ? 'selected' : '' }}>{{ $fuel }}</option>
+                    @endforeach
+                </select>
+                @error('fuel_type')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
@@ -114,24 +123,6 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-
-            <div class="col-md-6">
-                <label for="fuel_type" class="form-label">Fuel Type</label>
-                <input type="text" class="form-control @error('fuel_type') is-invalid @enderror" 
-                       id="fuel_type" name="fuel_type" value="{{ old('fuel_type') }}">
-                @error('fuel_type')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label for="manufacturing_year" class="form-label">Manufacturing Year <span class="text-danger">*</span></label>
-            <input type="number" class="form-control @error('manufacturing_year') is-invalid @enderror" 
-                   id="manufacturing_year" name="manufacturing_year" value="{{ old('manufacturing_year') }}" min="1900" max="{{ date('Y') }}">
-            @error('manufacturing_year')
-                <span class="text-danger">{{ $message }}</span>
-            @enderror
         </div>
 
         <div class="row mb-3">
@@ -210,5 +201,12 @@
     </div>
 </div>
 
+<script>
+    document.querySelectorAll('.fleet-license-plate').forEach(function (input) {
+        input.addEventListener('input', function () {
+            this.value = this.value.replace(/\s+/g, '').toUpperCase();
+        });
+    });
+</script>
 
 @endsection

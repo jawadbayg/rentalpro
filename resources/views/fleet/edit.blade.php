@@ -9,9 +9,12 @@
         @csrf
         @method('PUT')
         <input type="hidden" name="user_id" value="{{ $fleet->user_id }}">
+
         <div class="form-group">
-            <label for="vehicle_no">Vehicle No</label>
-            <input type="text" class="form-control" id="vehicle_no" name="vehicle_no" value="{{ old('vehicle_no', $fleet->vehicle_no) }}" required>
+            <label for="license_plate">License Plate</label>
+            <input type="text" class="form-control fleet-license-plate" id="license_plate" name="license_plate"
+                   value="{{ old('license_plate', $fleet->license_plate) }}" required
+                   autocomplete="off" autocapitalize="characters" spellcheck="false">
         </div>
 
         <div class="form-group">
@@ -30,18 +33,35 @@
         </div>
 
         <div class="form-group">
+            @php
+                $vehicleTypes = ['Sedan', 'SUV', 'Jeep', 'Other'];
+                $fuelTypes = ['Petrol', 'Diesel', 'EV'];
+                $selectedVehicleType = old('vehicle_type', $fleet->vehicle_type);
+                $selectedFuelType = old('fuel_type', $fleet->fuel_type);
+            @endphp
             <label for="vehicle_type">Vehicle Type</label>
-            <input type="text" class="form-control" id="vehicle_type" name="vehicle_type" value="{{ old('vehicle_type', $fleet->vehicle_type) }}" required>
+            <select class="form-control" id="vehicle_type" name="vehicle_type" required>
+                <option value="">Select Vehicle type</option>
+                @foreach ($vehicleTypes as $type)
+                    <option value="{{ $type }}" {{ $selectedVehicleType === $type ? 'selected' : '' }}>{{ $type }}</option>
+                @endforeach
+                @if ($selectedVehicleType && ! in_array($selectedVehicleType, $vehicleTypes, true))
+                    <option value="{{ $selectedVehicleType }}" selected>{{ $selectedVehicleType }}</option>
+                @endif
+            </select>
         </div>
 
         <div class="form-group">
-            <label for="license_plate">License Plate</label>
-            <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{ old('license_plate', $fleet->license_plate) }}" required>
-        </div>
-
-        <div class="form-group">
-            <label for="manufacturing_year">Manufacturing Year</label>
-            <input type="number" class="form-control" id="manufacturing_year" name="manufacturing_year" value="{{ old('manufacturing_year', $fleet->manufacturing_year) }}" required>
+            <label for="fuel_type">Fuel Type</label>
+            <select class="form-control" id="fuel_type" name="fuel_type">
+                <option value="">Select fuel type</option>
+                @foreach ($fuelTypes as $fuel)
+                    <option value="{{ $fuel }}" {{ $selectedFuelType === $fuel ? 'selected' : '' }}>{{ $fuel }}</option>
+                @endforeach
+                @if ($selectedFuelType && ! in_array($selectedFuelType, $fuelTypes, true))
+                    <option value="{{ $selectedFuelType }}" selected>{{ $selectedFuelType }}</option>
+                @endif
+            </select>
         </div>
 
         <div class="form-group">
@@ -59,11 +79,6 @@
         </div>
 
         <div class="form-group">
-            <label for="fuel_type">Fuel Type</label>
-            <input type="text" class="form-control" id="fuel_type" name="fuel_type" value="{{ old('fuel_type', $fleet->fuel_type) }}">
-        </div>
-
-        <div class="form-group">
             <label for="images">Images</label>
             <input type="file" class="form-control" id="images" name="images[]" multiple>
             @foreach($fleet->images as $image)
@@ -74,5 +89,13 @@
         <button type="submit" class="btn-black mt-4">Update Vehicle</button>
     </form>
 </div>
+
+<script>
+    document.querySelectorAll('.fleet-license-plate').forEach(function (input) {
+        input.addEventListener('input', function () {
+            this.value = this.value.replace(/\s+/g, '').toUpperCase();
+        });
+    });
+</script>
 
 @endsection

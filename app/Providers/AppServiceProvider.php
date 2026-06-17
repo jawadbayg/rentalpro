@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            \Illuminate\Foundation\Console\ServeCommand::class,
+            \App\Console\Commands\ServeCommand::class
+        );
     }
 
     /**
@@ -19,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (app()->runningInConsole()) {
+        if (app()->runningInConsole() || app()->environment('testing')) {
     return;
 }
 
